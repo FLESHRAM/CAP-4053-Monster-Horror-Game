@@ -3,16 +3,16 @@ using System.Collections;
 
 public class BallController : MonoBehaviour {
 
-	public float speed = 10.0F;
-	public float rotationSpeed = 100.0F;
+	public float moveSpeed = 8.0F;
+	public float rotSpeed = 200.0F;
 	void Update() {
 
-		float translation = Input.GetAxis("Vertical") * speed;
-		float rotation = Input.GetAxis("Horizontal") * rotationSpeed;
-		translation *= Time.deltaTime;
-		rotation *= Time.deltaTime;
+		float trans = Input.GetAxis("Vertical") * moveSpeed;
+		float rot = Input.GetAxis("Horizontal") * rotSpeed;
+		trans *= Time.deltaTime;
+		rot *= Time.deltaTime;
 
-		transform.Translate(translation, 0, 0);
-		transform.Rotate(0, 0, rotation);
+		transform.Translate(trans, 0, 0);
+		transform.Rotate(0, 0, rot);
 	}
 }
