@@ -7,12 +7,12 @@ public class BallController : MonoBehaviour {
 	public float rotSpeed = 200.0F;
 	void Update() {
 
-		float trans = Input.GetAxis("Vertical") * moveSpeed;
+		float move = Input.GetAxis("Vertical") * moveSpeed;
 		float rot = Input.GetAxis("Horizontal") * rotSpeed;
-		trans *= Time.deltaTime;
+		move *= Time.deltaTime;
 		rot *= Time.deltaTime;
 
-		transform.Translate(trans, 0, 0);
+		transform.Translate(move, 0, 0);
 		transform.Rotate(0, 0, rot);
 	}
 }
