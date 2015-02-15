@@ -1,8 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\senTest.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\pieSensor.cs">
     <Files>
-      <File FileName="Assets\senTest.cs" Line="22" Column="160" />
+      <File FileName="Assets\BallController.cs" Line="20" Column="1" />
+      <File FileName="Assets\BallAnimator.cs" Line="1" Column="1" />
+      <File FileName="Assets\CircularSensor.cs" Line="1" Column="1" />
+      <File FileName="Assets\SensorActivate.cs" Line="1" Column="1" />
+      <File FileName="Assets\senTest.cs" Line="1" Column="1" />
+      <File FileName="Assets\pieSensor.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
