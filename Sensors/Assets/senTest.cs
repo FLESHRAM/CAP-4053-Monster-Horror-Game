@@ -19,7 +19,7 @@ public class senTest : MonoBehaviour {
 
 	void Raycasting() {
 
-		RaycastHit2D hit = Physics2D.Raycast (fStart.position, fEnd.position, Vector2.Distance (fStart.position, fEnd.position));
+		RaycastHit2D hit = Physics2D.Raycast (fStart.position, fEnd.position, Vector2.Distance (fStart.position, fEnd.position), 1 << LayerMask.NameToLayer("Obstacle"));
 
 		if (hit.collider != null) {
 			Debug.DrawLine(fStart.position, hit.point, Color.green);		
