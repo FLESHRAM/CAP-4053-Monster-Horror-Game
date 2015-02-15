@@ -50,6 +50,7 @@
      <Compile Include="Assets\BallController.cs" />
      <Compile Include="Assets\CircularSensor.cs" />
      <Compile Include="Assets\SensorActivate.cs" />
+     <Compile Include="Assets\senTest.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>
