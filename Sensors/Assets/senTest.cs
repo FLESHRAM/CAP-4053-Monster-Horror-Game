@@ -4,7 +4,6 @@ using System.Collections;
 public class senTest : MonoBehaviour {
 
 	public Transform fStart, fEnd;
-	//public Object[] FLoaters;
 	public float radarRadius = 2f; 
 	private RaycastHit2D prevHit;
 	private Collider2D[] prevFloaters;
@@ -16,7 +15,7 @@ public class senTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Raycasting ();
+		//Raycasting ();
 		Radar();
 	}
 
