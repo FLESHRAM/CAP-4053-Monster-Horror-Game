@@ -5,6 +5,7 @@ public class pieSensor : MonoBehaviour {
 
 	public Transform fStart_line1, fEnd_line1;
 	public Transform fStart_line2, fEnd_line2;
+	public UnityEngine.UI.Text pie;
 
 	private cone_front_trigger cone_front;
 	private cone_left_trigger cone_left;
@@ -25,5 +26,6 @@ public class pieSensor : MonoBehaviour {
 		Debug.DrawLine (fStart_line1.position, fEnd_line1.position, Color.white);
 		Debug.DrawLine (fStart_line2.position, fEnd_line2.position, Color.white);
 		Debug.Log ("Return: " + cone_front.isInfront.ToString() + "," + cone_left.isOnLeft.ToString() + "," + cone_back.isOnBack.ToString() + "," + cone_right.isOnRight.ToString());
+		pie.text = ("Pie Sensor: " + cone_front.isInfront.ToString() + "," + cone_left.isOnLeft.ToString() + "," + cone_back.isOnBack.ToString() + "," + cone_right.isOnRight.ToString());
 	}
 }
