@@ -41,6 +41,7 @@ public class senTest : MonoBehaviour {
 			for(int i = 0; i<prevFloaters.Length; i++)
 			{
 				prevFloaters[i].attachedRigidbody.gameObject.renderer.material.color = Color.white;
+				print("Object " + prevFloaters[i].gameObject.name + " spotted at a distance of " + Vector2.Distance (transform.position, prevFloaters[i].transform.position));
 			}
 
 			System.Array.Clear(prevFloaters, 0, prevFloaters.Length);
