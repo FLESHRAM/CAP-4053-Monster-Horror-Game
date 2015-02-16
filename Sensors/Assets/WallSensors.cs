@@ -35,10 +35,10 @@ public class WallSensors : MonoBehaviour {
 			Debug.DrawLine(transform.position, hit.point, aColor);	
 
 			// Print distance?
-			if (prev != hit.distance){
+			/*if (prev != hit.distance){
 				Debug.Log(name + " " + hit.distance);
 				prev = hit.distance;
-			}
+			}*/
 		}
 
 		return prev;
