@@ -31,9 +31,9 @@ public class pieSensor : MonoBehaviour {
 
 		Collider2D[] colliders = Physics2D.OverlapCircleAll (transform.position, 1.75f);
 
-		foreach (Collider2D col in colliders) {
+		//foreach (Collider2D col in colliders) {
 
 			//Debug.Log("I see: " + col.name + " At an agle: " + Vector2.Angle(fStart_line1.position,col.transform.position));
-		}
+		//}
 	}
 }
