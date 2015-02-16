@@ -7,6 +7,8 @@ public class senTest : MonoBehaviour {
 	public float radarRadius = 2f; 
 	private RaycastHit2D prevHit;
 	private Collider2D[] prevFloaters;
+	public UnityEngine.UI.Text floaters;
+	private string info;
 
 	// Use this for initialization
 	void Start () {
@@ -34,16 +36,22 @@ public class senTest : MonoBehaviour {
 	}
 
 
+
 	void Radar()
 	{
 		if (prevFloaters != null) 
-		{
+		{   
+			info = null;
+			floaters.text = " ";
+
 			for(int i = 0; i<prevFloaters.Length; i++)
 			{
 				prevFloaters[i].attachedRigidbody.gameObject.renderer.material.color = Color.white;
 				print("Object " + prevFloaters[i].gameObject.name + " spotted at a distance of " + Vector2.Distance (transform.position, prevFloaters[i].transform.position));
+				info = (info + " " + "Object " + prevFloaters[i].gameObject.name + " spotted at a distance of " + Vector2.Distance (transform.position, prevFloaters[i].transform.position) + "\n");
 			}
 
+			floaters.text = info;
 			System.Array.Clear(prevFloaters, 0, prevFloaters.Length);
 		}
 

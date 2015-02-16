@@ -7,6 +7,9 @@ public class WallSensors : MonoBehaviour {
 	private float prev_right;
 	private float prev_left;
 	private float prev_center;
+	public UnityEngine.UI.Text center;
+	public UnityEngine.UI.Text left;
+	public UnityEngine.UI.Text right;
 
 	// Use this for initialization
 	void Start () {
@@ -18,14 +21,14 @@ public class WallSensors : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		prev_center = Raycasting ("center_feeler", 0, Color.green, prev_center);
-		prev_left = Raycasting ("left_feeler", 30, Color.red, prev_left);
-		prev_right = Raycasting ("right_feeler", -30, Color.red, prev_right);
+		prev_center = Raycasting ("center_feeler", 0, Color.green, prev_center, center);
+		prev_left = Raycasting ("left_feeler", 30, Color.red, prev_left, left);
+		prev_right = Raycasting ("right_feeler", -30, Color.red, prev_right, right);
 	}
 	
 	
 	
-	float Raycasting(string name, float z_offset, Color aColor, float prev) {
+	float Raycasting(string name, float z_offset, Color aColor, float prev, UnityEngine.UI.Text t) {
 
 		Vector2 dir;
 		dir.x = range * Mathf.Cos (Mathf.Deg2Rad * (transform.rotation.eulerAngles.z + z_offset));
@@ -39,8 +42,10 @@ public class WallSensors : MonoBehaviour {
 				Debug.Log(name + " " + hit.distance);
 				prev = hit.distance;
 			}*/
-		}
 
+		}
+		Debug.Log(name + " " + hit.distance);
+		t.text = (name + " " + hit.distance);
 		return prev;
 	}
 }

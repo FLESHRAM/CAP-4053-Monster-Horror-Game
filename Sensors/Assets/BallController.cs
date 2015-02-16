@@ -5,6 +5,7 @@ public class BallController : MonoBehaviour {
 
 	public float moveSpeed = 8.0F;
 	public float rotSpeed = 200.0F;
+	public UnityEngine.UI.Text player;
 
 	void Update() {
 
@@ -17,5 +18,6 @@ public class BallController : MonoBehaviour {
 		transform.Rotate(0, 0, -rot);
 
 		print ("Current Position: " + transform.position + " at roation: " + transform.rotation.z);
+		player.text = ("Current Position: " + transform.position + " at roation: " + transform.rotation.z);
 	}
 }
