@@ -24,8 +24,8 @@ public class pieSensor : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		//Debug.DrawLine (fStart_line1.position, fEnd_line1.position, Color.white);
-		//Debug.DrawLine (fStart_line2.position, fEnd_line2.position, Color.white);
+		Debug.DrawLine (fStart_line1.position, fEnd_line1.position, Color.white);
+		Debug.DrawLine (fStart_line2.position, fEnd_line2.position, Color.white);
 		Debug.Log ("Return: " + cone_front.isInfront.ToString() + "," + cone_left.isOnLeft.ToString() + "," + cone_back.isOnBack.ToString() + "," + cone_right.isOnRight.ToString());
 
 
