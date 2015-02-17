@@ -48,7 +48,7 @@ public class senTest : MonoBehaviour {
 			{
 				prevFloaters[i].attachedRigidbody.gameObject.renderer.material.color = Color.white;
 				print("Object " + prevFloaters[i].gameObject.name + " spotted at a distance of " + Vector2.Distance (transform.position, prevFloaters[i].transform.position));
-				info = (info + " " + "Object " + prevFloaters[i].gameObject.name + " spotted at a distance of " + Vector2.Distance (transform.position, prevFloaters[i].transform.position) + "\n");
+				info = (info + " " + "Object " + prevFloaters[i].gameObject.name + " " + prevFloaters[i].transform.position +" spotted, Distance: " + Vector2.Distance (transform.position, prevFloaters[i].transform.position) + "\n");
 			}
 
 			floaters.text = info;
