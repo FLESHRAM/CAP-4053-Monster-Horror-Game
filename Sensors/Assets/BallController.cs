@@ -17,7 +17,7 @@ public class BallController : MonoBehaviour {
 		transform.Translate(move, 0, 0);
 		transform.Rotate(0, 0, -rot);
 
-		print ("Current Position: " + transform.position + " at roation: " + transform.rotation.z);
-		player.text = ("Current Position: " + transform.position + " at roation: " + transform.rotation.z);
+		print ("Current Position: " + transform.position + " at roation: " + transform.rotation.eulerAngles);
+		player.text = ("Current Position: " + transform.position + " at roation: " + transform.rotation.eulerAngles);
 	}
 }
