@@ -31,7 +31,7 @@ public class BallController : MonoBehaviour {
 			direction = "East";
 		}
 
-		print ("Current Position: " + transform.position + " at roation: " + transform.rotation.eulerAngles);
-		player.text = ("Current Position: " + transform.position + " at roation: " + transform.rotation.eulerAngles + " Facing: " + direction);
+		//print ("Current Position: " + transform.position + " at roation: " + transform.rotation.eulerAngles);
+		//player.text = ("Current Position: " + transform.position + " at roation: " + transform.rotation.eulerAngles + " Facing: " + direction);
 	}
 }

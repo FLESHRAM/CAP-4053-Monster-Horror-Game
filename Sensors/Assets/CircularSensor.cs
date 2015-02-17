@@ -7,13 +7,12 @@ public class CircularSensor : MonoBehaviour {
 	private GameObject anchor;
 	public float sensorCooldown;
 	private float nextSensor;
-	
+
 	// Use this for initialization
 	void Start () {
 		
 		agentList = GameObject.FindGameObjectsWithTag("Agent");	
 		anchor = GameObject.FindGameObjectWithTag("Player");
-
 	}
 	
 	// Update is called once per frame
@@ -21,18 +20,29 @@ public class CircularSensor : MonoBehaviour {
 		
 		Bounds bounds1 = GetComponent<SpriteRenderer>().bounds;
 		Vector3 anchorPos =  anchor.transform.position;
-		anchorPos.z = 2;
+		anchorPos.z = (float)0.1;
 		transform.position = anchorPos;
 		
 		//Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		//mousePos.z = 0;
 		//transform.position = mousePos;
+
+		if (Input.GetKey (KeyCode.Alpha2) && Time.time > nextSensor) 
+		{
+			if (GetComponent<SpriteRenderer> ().isVisible)
+				gameObject.renderer.enabled = false;
+			else
+				gameObject.renderer.enabled = true;
+
+			nextSensor = Time.time + sensorCooldown;
+		}
+
 		
 		if(Input.GetKey(KeyCode.Alpha1) && Time.time > nextSensor)
 		{
 			string message = "";
 
-			Debug.Log(transform.renderer.bounds);
+			//Debug.Log(transform.renderer.bounds);
 
 			List<GameObject> inRangeList = new List<GameObject>();
 			for(int i = 0; i < agentList.Length; i++)
