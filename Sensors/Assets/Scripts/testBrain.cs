@@ -11,6 +11,9 @@ public class testBrain : MonoBehaviour {
 	private Vector3 targetPos;
 	private NodeData data;
 
+	private float currLenght;
+	private ArrayList path = new ArrayList();
+
 	public bool stop;
 
 	// Use this for initialization
@@ -52,5 +55,15 @@ public class testBrain : MonoBehaviour {
 		}
 
 		//else if (stop) { transform.position = targetPos; }
+	}
+
+
+
+
+	void seek(GameObject node, float L)
+	{
+		NodeData data = node.GetComponent ("NodeData") as NodeData;
+
+
 	}
 }
