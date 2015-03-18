@@ -6,7 +6,7 @@ public class senTest : MonoBehaviour {
 	public Transform fStart, fEnd;
 	public float radarRadius = 2f; 
 	private RaycastHit2D prevHit;
-	private Collider2D[] prevFloaters;
+	public Collider2D[] prevFloaters;
 	public UnityEngine.UI.Text floaters;
 	private string info;
 

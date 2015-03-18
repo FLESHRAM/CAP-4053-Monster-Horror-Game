@@ -3,6 +3,8 @@ using System.Collections;
 
 public class NodeData : MonoBehaviour {
 
+	public GameObject Inhabited;
+
 	public GameObject up;
 	public GameObject down;
 	public GameObject left;
