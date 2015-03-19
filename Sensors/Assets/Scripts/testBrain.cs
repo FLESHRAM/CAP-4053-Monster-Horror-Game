@@ -11,8 +11,11 @@ public class testBrain : MonoBehaviour {
 	private Vector3 targetPos;
 	private NodeData data;
 
-	private float currLenght;
+
 	private ArrayList path = new ArrayList();
+
+	private ArrayList openList = new ArrayList ();
+	private ArrayList closedList = new ArrayList ();
 
 	public bool stop;
 
@@ -25,6 +28,8 @@ public class testBrain : MonoBehaviour {
 		targetPos = data.down.transform.position;
 
 		data.debugLines (data.name);
+
+		seek (startNode, "Floater");
 	}
 
 
@@ -60,10 +65,75 @@ public class testBrain : MonoBehaviour {
 
 
 
-	void seek(GameObject node, float L)
+	void seek(GameObject node, string target)
 	{
+
 		NodeData data = node.GetComponent ("NodeData") as NodeData;
+		data.length = 0;
+		data.last = null;
+		closedList.Add (node);
 
+		bool running = true;
+		while (running) 
+		{ 
+			data = node.GetComponent ("NodeData") as NodeData;
+			if(data.Inhabited!=null)
+			{
+				if(data.Inhabited.name == target) { running = false; break; }
+			}
 
+			if(data.up!=null && !closedList.Contains(data.up))
+			{
+				NodeData temp = data.up.GetComponent("NodeData") as NodeData;
+				temp.last = node;
+				temp.length = data.length++;
+				openList.Add (data.up);
+			}
+
+			if(data.down!=null && !closedList.Contains(data.down))
+			{   
+				NodeData temp = data.down.GetComponent("NodeData") as NodeData;
+				temp.last = node;
+				temp.length = data.length++;
+				openList.Add(data.down);
+			}
+
+			if(data.left!=null && !closedList.Contains (data.left))
+			{
+				NodeData temp = data.left.GetComponent("NodeData") as NodeData;
+				temp.last = node;
+				temp.length = data.length++;
+				openList.Add (data.left);
+			}
+
+			if(data.right!=null && !closedList.Contains(data.right))
+			{
+				NodeData temp = data.right.GetComponent("NodeData") as NodeData;
+				temp.last = node;
+				temp.length = data.length++;
+				openList.Add (data.right);
+			}
+			 
+			if(openList.Contains(node)) openList.Remove(node);
+			if(!closedList.Contains(node)) closedList.Add (node);
+			print ((GameObject)openList[0]);
+			node = (GameObject)openList[0];
+		}
+
+		running = true;
+		while(running)
+		{
+			path.Add (node);
+			NodeData temp = node.GetComponent("NodeData") as NodeData;
+			node = temp.last;
+			if (node == null) running = false;
+		}
+
+		path.Reverse ();
+		string p = "";
+		for (int i=0; i<path.Count; i++) {
+			p += (GameObject)path[i] + " ";		
+		}
+		print (p);
 	}
 }

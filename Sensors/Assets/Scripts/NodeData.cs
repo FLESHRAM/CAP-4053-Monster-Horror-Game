@@ -9,6 +9,9 @@ public class NodeData : MonoBehaviour {
 	public GameObject down;
 	public GameObject left;
 	public GameObject right;
+
+	public int length = 0;
+	public GameObject last;
 	
 	private GameObject[] dir = new GameObject[4];
 	public int[] connected = new int[4] {-1, -1, -1, -1};
