@@ -27,7 +27,7 @@ public class create_map : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		floor_patterns = new Transform[7] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8,floor_9};
+		floor_patterns = new Transform[6] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8};
 
 		//Create the outside square
 		Instantiate (top_left_corner, new Vector3 (-9.64f, 5.64f, 0.0f), Quaternion.identity);
@@ -62,14 +62,14 @@ public class create_map : MonoBehaviour {
 
 				int rand = Random.Range(0, 10);
 
-				if ((x != -9f && y != 5.0f) && rand == 4) {
+				if ((x != -9f || y != 5.0f) && rand == 4) {
 					Instantiate (wall_vertical, new Vector3 (x, y, 0.0f), Quaternion.identity);
 				}
-				else if ((x != -9f && y != 5.0f) && rand == 8) {
+				else if ((x != -9f || y != 5.0f) && rand == 8) {
 					Instantiate (wall_horizontal, new Vector3 (x, y, 0.0f), Quaternion.identity);
 				}
 				else {
-					Instantiate (floor_patterns [Random.Range (0, 7)], new Vector3 (x, y, 0.0f), Quaternion.identity);
+					Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 0.0f), Quaternion.identity);
 				}
 			}
 		}
