@@ -22,9 +22,14 @@ public class create_map : MonoBehaviour {
 	public Transform bottom_right_corner;
 	public Transform bottom_left_corner;
 
+	private Transform[] floor_patterns;
+
 	// Use this for initialization
 	void Start () {
 
+		floor_patterns = new Transform[9] {floor_1,floor_2,floor_3,floor_4,floor_5,floor_6,floor_7,floor_8,floor_9};
+
+		//Create the outside square
 		Instantiate (top_left_corner, new Vector3 (-9.64f, 5.64f, 0.0f), Quaternion.identity);
 
 		for (float x = -9f; x < 10f; x += 0.64f) {
@@ -50,6 +55,13 @@ public class create_map : MonoBehaviour {
 		}
 
 		Instantiate (top_right_corner, new Vector3 (10.2f, 5.64f, 0.0f), Quaternion.identity);
+
+		//Create the floor patter
+		for (float y = 5.0f; y > -10f; y -= 0.64f) {
+			for (float x = -9f; x < 10f; x += 0.64f) {
+				Instantiate (floor_patterns [Random.Range (0, 9)], new Vector3 (x, y, 0.0f), Quaternion.identity);
+			}
+		}
 
 
 	}
