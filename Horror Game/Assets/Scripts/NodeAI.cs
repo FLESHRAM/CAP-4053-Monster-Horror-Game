@@ -12,6 +12,7 @@ public class NodeAI : MonoBehaviour {
 
 			nodesAbove = new ArrayList();
 			generateNodes ();
+		    deleteCollisions();
 		    
 	}
 	
@@ -24,16 +25,30 @@ public class NodeAI : MonoBehaviour {
 
 
 
-	void nameNodes ()
+	void deleteCollisions ()
 	{
-		int count=0;
-		NodeData[] nodes = GetComponentsInChildren<NodeData> ();
+		NodeInfo[] nodes = GetComponentsInChildren<NodeInfo> ();
+		ArrayList collisions = new ArrayList ();
+
 
 		for (int i=1; i<nodes.Length; i++) 
 		{
-			count++;
-			string n = "" + count;
-			nodes[i].gameObject.name = n;
+			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.25f, 1 << LayerMask.NameToLayer ("Obstacle"));
+			if (obstacles.Length > 0) collisions.Add (nodes[i]);
+		}
+
+		for (int i=0; i<collisions.Count; i++) 
+		{
+			NodeInfo curr = (NodeInfo)collisions[i];
+			NodeInfo temp = null;
+
+			if (curr.up!=null) { temp = curr.up.GetComponent("NodeInfo") as NodeInfo; temp.disconnectDown(); }
+			if (curr.down!=null) { temp = curr.down.GetComponent("NodeInfo") as NodeInfo; temp.disconnectUp(); }
+			if (curr.left!=null) { temp = curr.left.GetComponent("NodeInfo") as NodeInfo; temp.disconnectRight(); }
+			if (curr.right!=null) { temp = curr.right.GetComponent("NodeInfo") as NodeInfo; temp.disconnectLeft(); }
+
+			Destroy(curr.gameObject);
+
 		}
 	}
 
@@ -51,7 +66,7 @@ public class NodeAI : MonoBehaviour {
 		     float xOffset = Mathf.Abs (xBound);
 		float yBound = sPos.y;
 		GameObject last = start;
-		GameObject temp;
+		GameObject temp = null;
 		print (-1 * xBound);
 
 
@@ -104,6 +119,8 @@ public class NodeAI : MonoBehaviour {
 			last = temp;
 			print (nodesAbove);
 		}
+
+		if(temp!=null) Destroy (temp);
 	}
 
 

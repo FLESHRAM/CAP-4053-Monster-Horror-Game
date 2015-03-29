@@ -23,4 +23,15 @@ public class NodeInfo : MonoBehaviour {
 	void Update () {
 	
 	}
+
+
+
+
+	public void disconnectUp() { up = null; }
+	public void disconnectDown() { down = null; }
+	public void disconnectLeft() { left = null; }
+	public void disconnectRight() { right = null; }
+
+
 }
+
