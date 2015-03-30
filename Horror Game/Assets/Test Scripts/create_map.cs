@@ -30,42 +30,41 @@ public class create_map : MonoBehaviour {
 		floor_patterns = new Transform[6] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8};
 
 		//Create the outside square
-		Instantiate (top_left_corner, new Vector3 (-9.64f, 5.64f, 0.0f), Quaternion.identity);
+		Instantiate (top_left_corner, new Vector3 (-16.0f, 8.0f, 0.0f), Quaternion.identity);
 
-		for (float x = -9f; x < 10f; x += 0.64f) {
-			Instantiate (wall_horizontal, new Vector3 (x, 5.64f, 0.0f), Quaternion.identity);
+		for (float x = -15.36f; x < 15.64f; x += 0.64f) {
+			Instantiate (wall_horizontal, new Vector3 (x, 8.0f, 0.0f), Quaternion.identity);
 		}
 
-		Instantiate (top_right_corner, new Vector3 (-9.64f, 5.64f, 0.0f), Quaternion.identity);
+		Instantiate (top_right_corner, new Vector3 (16.0f, 8.0f, 0.0f), Quaternion.identity);
 
-		for (float y = 5.64f; y > -10f; y -= 0.64f) {
-			Instantiate (wall_vertical, new Vector3 (-9.64f, y, 0.0f), Quaternion.identity);
+		for (float y = 8.0f; y > -7.64f; y -= 0.64f) {
+			Instantiate (wall_vertical, new Vector3 (-16.0f, y, 0.0f), Quaternion.identity);
 		}
 
-		Instantiate (bottom_left_corner, new Vector3 (-9.64f, -10.36f, 0.0f), Quaternion.identity);
+		Instantiate (bottom_left_corner, new Vector3 (-16.0f, -8.0f, 0.0f), Quaternion.identity);
 
-		for (float x = -9f; x < 10f; x += 0.64f) {
-			Instantiate (wall_horizontal, new Vector3 (x, -10.36f, 0.0f), Quaternion.identity);
+		for (float x = -15.36f; x < 15.64f; x += 0.64f) {
+			Instantiate (wall_horizontal, new Vector3 (x, -8.0f, 0.0f), Quaternion.identity);
 		}
 
-		Instantiate (bottom_right_corner, new Vector3 (10.2f, -10.36f, 0.0f), Quaternion.identity);
+		Instantiate (bottom_right_corner, new Vector3 (16.0f, -8.0f, 0.0f), Quaternion.identity);
 
-		for (float y = -10.36f; y < 5.0f; y += 0.64f) {
-			Instantiate (wall_vertical, new Vector3 (10.2f, y, 0.0f), Quaternion.identity);
+		for (float y = -7.36f; y < 7.64f; y += 0.64f) {
+			Instantiate (wall_vertical, new Vector3 (16.0f, y, 0.0f), Quaternion.identity);
 		}
 
-		Instantiate (top_right_corner, new Vector3 (10.2f, 5.64f, 0.0f), Quaternion.identity);
 
 		//Create the floor patter
-		for (float y = 5.0f; y > -10f; y -= 0.64f) {
-			for (float x = -9f; x < 10f; x += 0.64f) {
+		for (float y = 7.36f; y > -7.64f; y -= 0.64f) {
+			for (float x = -15.36f; x < 15.64f; x += 0.64f) {
 
 				int rand = Random.Range(0, 10);
 
-				if ((x != -9f || y != 5.0f) && rand == 4) {
+				if ((x != -15.36f || y != 7.36f) && rand == 4) {
 					Instantiate (wall_vertical, new Vector3 (x, y, 0.0f), Quaternion.identity);
 				}
-				else if ((x != -9f || y != 5.0f) && rand == 8) {
+				else if ((x != -15.36f || y != 7.36f) && rand == 8) {
 					Instantiate (wall_horizontal, new Vector3 (x, y, 0.0f), Quaternion.identity);
 				}
 				else {
