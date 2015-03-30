@@ -41,6 +41,8 @@ public class create_map : MonoBehaviour {
 		createBorder();
 
 		createFloor();
+		
+		createEmptySpaces();
 
 		spawnWalls();	
 	}
@@ -82,6 +84,36 @@ public class create_map : MonoBehaviour {
 		for (float y = upperBound - increment; y > -7.64f; y -= increment)
 			for (float x = leftBound + increment; x < 15.64f; x += increment)
 				Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 1.0f), Quaternion.identity);
+	}
+	
+	void createEmptySpaces()
+	{
+		for (float y = upperBound - 5; y > -7.64f + 3; y -= increment)
+			for (float x = leftBound + 5; x < 15.64f - 5; x += increment)
+				if(Random.Range(0, 250) == 1)
+				{
+					float wallRadius = (Random.Range(2, 4) * increment);
+					
+					for(float tempY = y + wallRadius; tempY > y - wallRadius; tempY -= increment)
+					{
+						Instantiate(wall_vertical, new Vector3(x - wallRadius, tempY, -1f), Quaternion.identity);
+						Instantiate(wall_vertical, new Vector3(x + wallRadius, tempY, -1f), Quaternion.identity);
+					}
+					
+					for(float tempX = x - wallRadius; tempX < x + wallRadius; tempX += increment)
+					{
+						Instantiate(wall_horizontal, new Vector3(tempX, y + wallRadius, -1f), Quaternion.identity);
+						Instantiate(wall_horizontal, new Vector3(tempX, y - wallRadius, -1f), Quaternion.identity);
+					
+					}
+					
+				Instantiate (top_left_corner, new Vector3 (x - wallRadius, y + wallRadius, -1.1f), Quaternion.identity);
+				Instantiate (top_right_corner, new Vector3 (x + wallRadius, y + wallRadius, -1.1f), Quaternion.identity);
+				Instantiate (bottom_left_corner, new Vector3 (x - wallRadius, y - wallRadius, -1.1f), Quaternion.identity);
+				Instantiate (bottom_right_corner, new Vector3 (x + wallRadius, y - wallRadius, -1.1f), Quaternion.identity);
+						
+					
+				}
 	}
 
 	void spawnWalls()
