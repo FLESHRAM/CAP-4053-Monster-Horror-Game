@@ -36,11 +36,11 @@ public class create_map : MonoBehaviour {
 	void Start () {
 
 		//Create the outside square
-		createWalls();
+		createBorder();
 
 		createFloor();
 
-		spawnObstacles();
+		spawnWalls();
 
 				/*
 
@@ -60,7 +60,7 @@ public class create_map : MonoBehaviour {
 	
 	}
 
-	void createWalls()
+	void createBorder()
 	{
 		Instantiate (top_left_corner, new Vector3 (leftBound, upperBound, 0.0f), Quaternion.identity);
 		Instantiate (top_right_corner, new Vector3 (16.0f, 8.0f, 0.0f), Quaternion.identity);
@@ -85,19 +85,19 @@ public class create_map : MonoBehaviour {
 
 		for (float y = upperBound - increment; y > -7.64f; y -= increment)
 			for (float x = leftBound + increment; x < 15.64f; x += increment)
-				Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 0.0f), Quaternion.identity);
+				Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 1.0f), Quaternion.identity);
 	}
 
-	void spawnObstacles()
+	void spawnWalls()
 	{
 		for (float y = upperBound; y > -7.64f; y -= increment)
 			for (float x = leftBound; x < 15.64f; x += increment)
-				if(Random.Range(0,20) == 1 && wallResources > 0)
+				if(Random.Range(0,25) == 1 && wallResources > 0)
 				{
 					if(x <= leftBound + 4 && y >= upperBound - 4)
 						continue;
 				
-					int distance = Random.Range(3,10);
+					int distance = Random.Range(10,20);
 
 					if(Random.Range(0, 2) == 1)
 						generateWall(x, y, 'v', 1, distance);
@@ -114,30 +114,71 @@ public class create_map : MonoBehaviour {
 		
 		for(int i = distance; i > 0; i--)
 		{
-			if(Physics2D.OverlapCircle(new Vector2(x, y), .1f))
+			if(Physics2D.OverlapCircle(new Vector2(x, y), .01f))
 				return;
 				
 			if(wallDirection == 'v')
 			{
+				if(Physics2D.OverlapCircle(new Vector2(x, y - increment), .1f))
+					return;
+			
 				Instantiate(wall_vertical, new Vector3(x, y, -1f), Quaternion.identity);
-				x += increment;
+				y -= increment;
 			}
 			else
 			{
+				if(Physics2D.OverlapCircle(new Vector2(x + increment, y), .1f))
+					return;
+			
 				Instantiate(wall_horizontal, new Vector3(x, y, -1f), Quaternion.identity);
-				y += increment;
+				x += increment;
 			}
 			
 			distance--;
 			
-			if(Random.Range (0, 6) == 1)
+			if(Random.Range (0, 3) == 1)
 			{
 				if(wallDirection == 'v')
-					generateWall(x, y, 'h', movementDirection, distance);
+				{
+					Instantiate(bottom_left_corner, new Vector3(x, y, -1f), Quaternion.identity);
+					generateWall(x + increment, y, 'h', movementDirection, distance);
+				}
 				else
-					generateWall(x, y, 'v', movementDirection, distance);
+				{
+					Instantiate(top_right_corner, new Vector3(x, y, -1f), Quaternion.identity);
+					generateWall(x, y + increment, 'v', movementDirection, distance);
+				}
 			}				
 		}
+	}
+	
+	bool checkSpot(float x, float y, char wallDirection)
+	{
+		if(Physics2D.OverlapCircle(new Vector2(x, y), .1f))
+			return false;
+	
+		if(wallDirection == 'v')
+		{
+			if(Physics2D.OverlapCircle(new Vector2(x, y - increment), .1f))
+				return false;
+			
+			if(Physics2D.OverlapCircle(new Vector2(x - increment, y), .1f) || Physics2D.OverlapCircle(new Vector2(x + increment, y), .1f))
+				return false;			
+		}
+		
+		else
+		{
+			if(Physics2D.OverlapCircle(new Vector2(x + increment, y), .1f))
+				return false;
+			
+			if(Physics2D.OverlapCircle(new Vector2(x, y - increment), .1f) || Physics2D.OverlapCircle(new Vector2(x, y + increment), .1f))
+				return false;
+		}
+		
+		if(Physics2D.OverlapCircle(new Vector2(x - increment, y - increment), .1f) || Physics2D.OverlapCircle(new Vector2(x + increment, y - increment), .1f))
+			return false;
+		
+		return true;
 	}
 
 	// Update is called once per frame
