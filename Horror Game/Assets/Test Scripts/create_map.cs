@@ -24,7 +24,7 @@ public class create_map : MonoBehaviour {
 
 	private Transform[] floor_patterns;
 
-	private int wallResources = 100;
+	private int wallResources = 2000;
 	private float leftBound = -16;
 	private float rightBound = 16;
 	private float upperBound = 8;
@@ -83,21 +83,61 @@ public class create_map : MonoBehaviour {
 	{
 		floor_patterns = new Transform[6] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8};
 
-		for (float y = 7.36f; y > -7.64f; y -= 0.64f)
-			for (float x = -15.36f; x < 15.64f; x += 0.64f)
+		for (float y = upperBound - increment; y > -7.64f; y -= increment)
+			for (float x = leftBound + increment; x < 15.64f; x += increment)
 				Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 0.0f), Quaternion.identity);
 	}
 
 	void spawnObstacles()
 	{
-		for (float y = 7.36f; y > -7.64f; y -= 0.64f)
-			for (float x = -15.36f; x < 15.64f; x += 0.64f)
-				if(Random.Range(0,1) == 1 && wallResources > 0)
+		for (float y = upperBound; y > -7.64f; y -= increment)
+			for (float x = leftBound; x < 15.64f; x += increment)
+				if(Random.Range(0,20) == 1 && wallResources > 0)
 				{
-					Instantiate (wall_vertical, new Vector3 (x, y, 1.0f), Quaternion.identity);
-					wallResources--;
+					if(x <= leftBound + 4 && y >= upperBound - 4)
+						continue;
+				
+					int distance = Random.Range(3,10);
+
+					if(Random.Range(0, 2) == 1)
+						generateWall(x, y, 'v', 1, distance);
+					else
+						generateWall(x, y, 'h', 1, distance);
 				}
 
+	}
+	
+	void generateWall(float x, float y, char wallDirection, int movementDirection, int distance)
+	{
+		if(distance == 0)
+			return;
+		
+		for(int i = distance; i > 0; i--)
+		{
+			if(Physics2D.OverlapCircle(new Vector2(x, y), .1f))
+				return;
+				
+			if(wallDirection == 'v')
+			{
+				Instantiate(wall_vertical, new Vector3(x, y, -1f), Quaternion.identity);
+				x += increment;
+			}
+			else
+			{
+				Instantiate(wall_horizontal, new Vector3(x, y, -1f), Quaternion.identity);
+				y += increment;
+			}
+			
+			distance--;
+			
+			if(Random.Range (0, 6) == 1)
+			{
+				if(wallDirection == 'v')
+					generateWall(x, y, 'h', movementDirection, distance);
+				else
+					generateWall(x, y, 'v', movementDirection, distance);
+			}				
+		}
 	}
 
 	// Update is called once per frame
