@@ -5,12 +5,14 @@ public class NodeAI : MonoBehaviour {
 
 	public GameObject start;
 	private ArrayList nodesAbove;
+	private ArrayList currNodes;
 
 	// Use this for initialization
 	void Start () {
 
 
 			nodesAbove = new ArrayList();
+		    currNodes = new ArrayList ();
 			generateNodes ();
 		    deleteCollisions();
 		    
@@ -59,7 +61,6 @@ public class NodeAI : MonoBehaviour {
 	{
 		int count = 0;
 		Vector3 sPos = start.transform.position;
-		ArrayList currNodes = new ArrayList ();
 		currNodes.Add (start);
 
 		float xBound = sPos.x;
@@ -73,18 +74,18 @@ public class NodeAI : MonoBehaviour {
 
 
 
-		for(float i=yBound; i>=(-1*yBound); i--)
+		for(float i=yBound; i>=(-1*yBound); i-=0.64f)
 		{
 			if(nodesAbove.Count > 0)
 			{
-				setAbove ((int)xOffset, (int)(sPos.x), last);
+				setAbove (currNodes.IndexOf(last), last);
 			}
 
 
-			for(float j=sPos.x; j<(-1*sPos.x); j++)
+			for(float j=sPos.x; j<(-1*sPos.x); j+=0.64f)
 			{
 				temp = (GameObject)Instantiate (last);
-				temp.transform.position = new Vector3(j+1, last.transform.position.y, 0);
+				temp.transform.position = new Vector3((float)(last.transform.position.x+0.64), last.transform.position.y, 0);
 				count++;
 				temp.name = count.ToString();
 
@@ -100,7 +101,7 @@ public class NodeAI : MonoBehaviour {
 			
 			if(nodesAbove.Count > 0)
 			    {
-					setAbove ((int)xOffset, (int)(j+1), last);
+					setAbove (currNodes.IndexOf (last), last);
 			    }
 
 			   
@@ -113,7 +114,8 @@ public class NodeAI : MonoBehaviour {
 			temp = (GameObject)Instantiate (last);
 			count++;
 			temp.name = count.ToString();
-			temp.transform.position = new Vector3(sPos.x, i-1, 0);
+			temp.transform.position = new Vector3(sPos.x, (float)(sPos.y-0.64), 0);
+			sPos = temp.transform.position;
 			temp.transform.parent = gameObject.transform;
 			currNodes.Add (temp);
 			last = temp;
@@ -127,10 +129,10 @@ public class NodeAI : MonoBehaviour {
 
 
 
-	void setAbove (int offset, int curr, GameObject last)
+	void setAbove (int index, GameObject last)
 	{
-		int spot = (int)(curr) + (int)offset;
-		GameObject temp = (GameObject)nodesAbove[spot];
+		//int spot = (int)(curr) + (int)offset;
+		GameObject temp = (GameObject)nodesAbove[index];
 		
 		
 		NodeInfo t = temp.GetComponent ("NodeInfo") as NodeInfo;
