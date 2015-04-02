@@ -15,12 +15,15 @@ public class NodeAI : MonoBehaviour {
 		    currNodes = new ArrayList ();
 			generateNodes ();
 		    deleteCollisions();
-		    
+
+		GameObject Girl = GameObject.Find ("Girl");
+		Brain girlBrain = Girl.GetComponent("Brain") as Brain;
+		girlBrain.testSight ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 
