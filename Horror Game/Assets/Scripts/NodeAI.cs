@@ -10,6 +10,8 @@ public class NodeAI : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		MapMaker maker = gameObject.GetComponent ("MapMaker") as MapMaker;
+		maker.Initialize ();
 
 			nodesAbove = new ArrayList();
 		    currNodes = new ArrayList ();

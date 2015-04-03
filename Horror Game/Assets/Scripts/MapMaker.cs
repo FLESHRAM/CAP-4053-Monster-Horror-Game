@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MapMaker : MonoBehaviour {
 
@@ -34,10 +35,13 @@ public class MapMaker : MonoBehaviour {
 	private List<GameObject> wallSections = new List<GameObject>();
 	
 	
-	// Use this for initialization
-	void Start () {
-		
-		//Create the outside square
+	
+
+
+
+
+	public void Initialize()
+	{
 		createBorder();
 		
 		createFloor();
@@ -46,7 +50,10 @@ public class MapMaker : MonoBehaviour {
 		
 		spawnWalls();	
 	}
-	
+
+
+
+
 	void createBorder()
 	{
 		Instantiate (top_left_corner, new Vector3 (leftBound, upperBound, 0.0f), Quaternion.identity);
@@ -240,8 +247,5 @@ public class MapMaker : MonoBehaviour {
 		return true;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }
