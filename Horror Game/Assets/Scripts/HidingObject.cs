@@ -21,6 +21,22 @@ public class HidingObject : MonoBehaviour {
 			node = hit.gameObject;
 		}
 
-		Collider2D seen = Physics2D.OverlapCircle(transform.position, 0.36f);
+		Collider2D seenPlayer = Physics2D.OverlapCircle (transform.position, 0.30f, 1 << LayerMask.NameToLayer ("Player"));
+		Collider2D seenVictim = Physics2D.OverlapCircle (transform.position, 0.30f, 1 << LayerMask.NameToLayer("Victim"));
+		bool seen = (seenPlayer != null || seenVictim != null);
+		if(prevSeen == null && seen)
+		{
+			if (seenPlayer!=null && seenVictim==null) { prevSeen = seenPlayer.gameObject; }
+			else if(seenPlayer==null && seenVictim!=null) { prevSeen = seenVictim.gameObject; }
+			prevSeen.renderer.material.color = Color.clear;
+		}
+
+		else if(prevSeen!=null && !seen)
+		{
+			prevSeen.renderer.material.color = Color.white;
+			prevSeen = null;
+		}
+
+
 	}
 }
