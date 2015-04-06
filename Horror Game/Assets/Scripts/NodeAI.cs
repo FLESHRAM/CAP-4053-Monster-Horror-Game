@@ -6,9 +6,13 @@ public class NodeAI : MonoBehaviour {
 	public GameObject start;
 	private ArrayList nodesAbove;
 	private ArrayList currNodes;
+	//private float node_offset;
 
 	// Use this for initialization
 	void Start () {
+
+		//CircleCollider2D circ = start.GetComponent<CircleCollider2D> ();
+		//node_offset = circ.radius * 2;
 
 		MapMaker maker = gameObject.GetComponent ("MapMaker") as MapMaker;
 		maker.Initialize ();
@@ -90,7 +94,7 @@ public class NodeAI : MonoBehaviour {
 			for(float j=sPos.x; j<(-1*sPos.x); j+=0.64f)
 			{
 				temp = (GameObject)Instantiate (last);
-				temp.transform.position = new Vector3((float)(last.transform.position.x+0.64), last.transform.position.y, 0);
+				temp.transform.position = new Vector3((float)(last.transform.position.x+0.64f), last.transform.position.y, 0);
 				count++;
 				temp.name = count.ToString();
 
@@ -119,7 +123,7 @@ public class NodeAI : MonoBehaviour {
 			temp = (GameObject)Instantiate (last);
 			count++;
 			temp.name = count.ToString();
-			temp.transform.position = new Vector3(sPos.x, (float)(sPos.y-0.64), 0);
+			temp.transform.position = new Vector3(sPos.x, (float)(sPos.y-0.64f), 0);
 			sPos = temp.transform.position;
 			temp.transform.parent = gameObject.transform;
 			currNodes.Add (temp);
