@@ -7,7 +7,7 @@ public class Brain : MonoBehaviour {
 	private ArrayList path = new ArrayList ();
 
 
-
+	private float sightRadius = 6f;
 	private ArrayList openList = new ArrayList ();
 	private ArrayList closedList = new ArrayList ();
 	private ArrayList allVisited = new ArrayList();
@@ -35,6 +35,26 @@ public class Brain : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		//print (Vector2.Distance (transform.position, sight.transform.position));
+		ArrayList visibleNodes = getVisibleNodes ();
+		GameObject player = visiblePlayer ();
+		ArrayList objects = hidingObjects ();
+
+
+		//for(int i = 0; i<visibleNodes.Count; i++)
+		//{
+			//GameObject t = (GameObject) visibleNodes[i];
+			//print (t);
+		//}
+
+		for(int i = 0; i<objects.Count; i++)
+		{
+			GameObject t = (GameObject) objects[i];
+			print (t);
+		}
+
+		if(player != null) print("I see the Player!!!");
+
 		if(moving)
 		{
 			anim.SetBool("IsWalking", true);
@@ -60,9 +80,58 @@ public class Brain : MonoBehaviour {
 
 
 
+	public ArrayList getVisibleNodes ()
+	{
+		ArrayList visible = new ArrayList ();
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
+
+		for(int i=0; i<nodes.Length; i++)
+		{
+			bool hit = Physics2D.Linecast(transform.position, nodes[i].transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
+			if (!hit) visible.Add (nodes[i].gameObject);
+		}
+
+		return visible;
+	}
+
+
+	public GameObject visiblePlayer()
+	{
+		GameObject player = null;
+		Collider2D p = Physics2D.OverlapCircle (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Player"));
+		if(p!=null)
+		{
+			bool hit = Physics2D.Linecast(transform.position, p.transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
+			if(hit) print ("Wall was hit");
+			if (!hit) player = p.gameObject;
+		}
+
+
+		return player;
+	}
+
+
+	public ArrayList hidingObjects ()
+	{
+		ArrayList visible = new ArrayList ();
+		Collider2D[] hiding = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Object"));
+		
+		for(int i=0; i<hiding.Length; i++)
+		{
+			bool hit = Physics2D.Linecast(transform.position, hiding[i].transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
+			if (!hit) 
+			{
+				if(!visible.Contains(hiding[i].gameObject)) visible.Add (hiding[i].gameObject);
+			}
+		}
+		
+		return visible;
+	}
+
+
 	public void testSight()
 	{
-		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, 1.5f, 1 << LayerMask.NameToLayer ("Node"));
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
 		if(nodes!=null)
 		{
 			GameObject mostFar = null;

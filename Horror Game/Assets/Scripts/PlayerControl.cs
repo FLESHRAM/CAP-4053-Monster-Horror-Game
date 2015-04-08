@@ -27,13 +27,13 @@ public class PlayerControl : MonoBehaviour {
 		if(Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
 		{
 			
-			if(Input.GetKey(KeyCode.W)) transform.position = Vector3.MoveTowards(transform.position, up.transform.position, moveSpeed*Time.deltaTime);
+			if(Input.GetKey(KeyCode.W)) transform.position = Vector2.MoveTowards(transform.position, up.transform.position, moveSpeed*Time.deltaTime);
 
-			if(Input.GetKey(KeyCode.A)) transform.position = Vector3.MoveTowards(transform.position, left.transform.position, moveSpeed*Time.deltaTime);
+			if(Input.GetKey(KeyCode.A)) transform.position = Vector2.MoveTowards(transform.position, left.transform.position, moveSpeed*Time.deltaTime);
 			
-			if(Input.GetKey(KeyCode.S)) transform.position = Vector3.MoveTowards(transform.position, down.transform.position, moveSpeed*Time.deltaTime);
+			if(Input.GetKey(KeyCode.S)) transform.position = Vector2.MoveTowards(transform.position, down.transform.position, moveSpeed*Time.deltaTime);
 
-			if(Input.GetKey(KeyCode.D)) transform.position = Vector3.MoveTowards(transform.position, right.transform.position, moveSpeed*Time.deltaTime);
+			if(Input.GetKey(KeyCode.D)) transform.position = Vector2.MoveTowards(transform.position, right.transform.position, moveSpeed*Time.deltaTime);
 		
 
 			anim.SetBool("IsMoving", true);

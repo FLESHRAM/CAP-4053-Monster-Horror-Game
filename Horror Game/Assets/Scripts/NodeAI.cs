@@ -22,9 +22,16 @@ public class NodeAI : MonoBehaviour {
 			generateNodes ();
 		    deleteCollisions();
 
+		GameObject[] cabinets = GameObject.FindGameObjectsWithTag("Cabinet");
+				for(int i=0; i<cabinets.Length; i++)
+				{
+			       cabinets[i].layer = 1 << LayerMask.NameToLayer("Object");
+				}
+
 		GameObject Girl = GameObject.Find ("Girl");
 		Brain girlBrain = Girl.GetComponent("Brain") as Brain;
 		girlBrain.testSight ();
+
 	}
 
 	// Update is called once per frame
