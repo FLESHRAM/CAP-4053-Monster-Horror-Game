@@ -25,7 +25,7 @@ public class NodeAI : MonoBehaviour {
 		GameObject[] cabinets = GameObject.FindGameObjectsWithTag("Cabinet");
 				for(int i=0; i<cabinets.Length; i++)
 				{
-			       cabinets[i].layer = 1 << LayerMask.NameToLayer("Object");
+			       cabinets[i].layer = 12;
 				}
 
 		GameObject Girl = GameObject.Find ("Girl");
