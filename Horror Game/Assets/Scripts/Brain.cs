@@ -57,7 +57,7 @@ public class Brain : MonoBehaviour {
 
 		if(moving)
 		{
-			anim.SetBool("IsWalking", true);
+			anim.SetBool("IsMoving", true);
 			Vector3 currPos = transform.position;
 			Vector3 target = getTarget (currPos);
 			transform.position = Vector3.Lerp (currPos, target, Time.deltaTime);
@@ -71,7 +71,7 @@ public class Brain : MonoBehaviour {
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
 		}
 
-		if(Vector3.Distance(transform.position, targetPos) < 0.08f ) { moving = false; turning = false; anim.SetBool ("IsWalking", false); }
+		if(Vector3.Distance(transform.position, targetPos) < 0.08f ) { moving = false; turning = false; anim.SetBool ("IsMoving", false); }
 		
 		if (path.Count>0) takingPath();
 	}

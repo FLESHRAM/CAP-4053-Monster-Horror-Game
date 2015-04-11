@@ -11,7 +11,9 @@ public class PlayerControl : MonoBehaviour {
 	public GameObject down;
 	public GameObject left;
 	public GameObject right;
-	
+	private Animator hold;
+
+	private bool attackDone = false;
 
 	// Use this for initialization
 	void Start () {
@@ -42,8 +44,12 @@ public class PlayerControl : MonoBehaviour {
 
 		Vector3 currPos = transform.position;
 
-		if(Input.GetButton("Fire1")) anim.SetBool("IsAttacking", true);
-		if(!Input.GetButton("Fire1")) anim.SetBool("IsAttacking", false);
+		if(!Input.GetButton("Fire1") && attackDone) anim.SetBool("IsAttacking", false);
+		if(Input.GetButton("Fire1")) 
+		{
+			attackDone = false;
+			anim.SetBool("IsAttacking", true);
+		}
 
 
 		Vector3 direction = Camera.main.ScreenToWorldPoint (Input.mousePosition);
@@ -59,6 +65,21 @@ public class PlayerControl : MonoBehaviour {
 
 		
 		if(!Input.GetButton("Vertical") && !Input.GetButton("Horizontal")) anim.SetBool("IsMoving", false);
+	}
+
+
+	public void attackFinished()
+	{
+		attackDone = true;
+
+	}
+
+
+	public void transformation(Animator Monster)
+	{
+		Animator player = gameObject.GetComponent<Animator> ();
+
+		player.runtimeAnimatorController = Monster.runtimeAnimatorController;
 	}
 }
 
