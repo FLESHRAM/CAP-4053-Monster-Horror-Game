@@ -14,11 +14,16 @@ public class PlayerControl : MonoBehaviour {
 	public GameObject right;
 	private Animator hold;
 
+	private stats stat;
+	private RuntimeAnimatorController saved_cont;
 	private bool attackDone = false;
+	private Animator transforming;
 
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent ("Animator") as Animator;
+		saved_cont = anim.runtimeAnimatorController;
+		stat = gameObject.GetComponent ("stats") as stats;
 	}
 	
 
@@ -81,19 +86,29 @@ public class PlayerControl : MonoBehaviour {
 			 blood.transform.position = new Vector2(hit.gameObject.transform.position.x, hit.gameObject.transform.position.y);
 
 
-			Vector3 dir = transform.position - blood.transform.position; 
-			dir.z = 0; dir.Normalize();
-			float angle = Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg;
-			blood.transform.rotation = Quaternion.Slerp (blood.transform.rotation, Quaternion.Euler (0, 0, angle), 1f);
+			 Vector3 dir = transform.position - blood.transform.position; 
+			 dir.z = 0; dir.Normalize();
+			 float angle = Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg;
+			 blood.transform.rotation = Quaternion.Slerp (blood.transform.rotation, Quaternion.Euler (0, 0, angle), 1f);
+
+			stats tStats = hit.gameObject.GetComponent("stats") as stats;
+			tStats.damage();
 		   }
 	}
 
 
 	public void transformation(Animator Monster)
 	{
-		Animator player = gameObject.GetComponent<Animator> ();
+		anim.SetBool ("Transform", true);
+		transforming = Monster;
+	}
 
-		player.runtimeAnimatorController = Monster.runtimeAnimatorController;
+
+	public void finishTransform() 
+	{ 
+		Animator player = gameObject.GetComponent<Animator> ();
+		anim.SetBool ("Transform", false);
+		player.runtimeAnimatorController = transforming.runtimeAnimatorController;
 	}
 }
 

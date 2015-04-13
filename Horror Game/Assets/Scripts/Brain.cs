@@ -20,12 +20,19 @@ public class Brain : MonoBehaviour {
 	private bool moving;
 	private bool turning;
 	private bool pathing;
+	private stats stat;
+	private RuntimeAnimatorController saved_cont;
 
 	Animator anim;
 
 	// Use this for initialization
 	void Start () {
 		anim = gameObject.GetComponent<Animator> ();
+		saved_cont = anim.runtimeAnimatorController;
+		stat = gameObject.GetComponent ("stats") as stats;
+
+
+		stat.health = 100f;
 		targetPos = transform.position;
 		moving = true;
 		turning = true;
