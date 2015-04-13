@@ -4,6 +4,7 @@ using System.Collections;
 public class Brain : MonoBehaviour {
 
 	public GameObject sight;
+	public GameObject blood;
 	private ArrayList path = new ArrayList ();
 
 
@@ -71,7 +72,7 @@ public class Brain : MonoBehaviour {
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
 		}
 
-		if(Vector3.Distance(transform.position, targetPos) < 0.08f ) { moving = false; turning = false; anim.SetBool ("IsMoving", false); }
+		if(Vector3.Distance(transform.position, targetPos) < 0.08f) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
 		
 		if (path.Count>0) takingPath();
 	}

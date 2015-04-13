@@ -6,6 +6,7 @@ public class PlayerControl : MonoBehaviour {
 	public Animator anim;
 	public float moveSpeed = 5f;
 	public float turnSpeed = 50f;
+	public GameObject hitSpace;
 	
 	public GameObject up;
 	public GameObject down;
@@ -72,6 +73,19 @@ public class PlayerControl : MonoBehaviour {
 	{
 		attackDone = true;
 
+		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.15f, 1 << LayerMask.NameToLayer("Victim"));
+		if(hit!=null)
+		   {
+			 Brain temp = hit.gameObject.GetComponent("Brain") as Brain;
+			 GameObject blood = (GameObject)Instantiate(temp.blood);
+			 blood.transform.position = new Vector2(hit.gameObject.transform.position.x, hit.gameObject.transform.position.y);
+
+
+			Vector3 dir = transform.position - blood.transform.position; 
+			dir.z = 0; dir.Normalize();
+			float angle = Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg;
+			blood.transform.rotation = Quaternion.Slerp (blood.transform.rotation, Quaternion.Euler (0, 0, angle), 1f);
+		   }
 	}
 
 

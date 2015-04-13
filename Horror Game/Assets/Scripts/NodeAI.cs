@@ -32,6 +32,10 @@ public class NodeAI : MonoBehaviour {
 		Brain girlBrain = Girl.GetComponent("Brain") as Brain;
 		girlBrain.testSight ();
 
+		GameObject Man = GameObject.Find ("Man");
+		Brain manBrain = Man.GetComponent("Brain") as Brain;
+		manBrain.testSight ();
+
 	}
 
 	// Update is called once per frame
