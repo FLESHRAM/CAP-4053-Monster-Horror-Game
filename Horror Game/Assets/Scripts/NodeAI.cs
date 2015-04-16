@@ -15,7 +15,7 @@ public class NodeAI : MonoBehaviour {
 		//node_offset = circ.radius * 2;
 
 		MapMaker maker = gameObject.GetComponent ("MapMaker") as MapMaker;
-		maker.Initialize ();
+		if(maker!=null) maker.Initialize ();
 
 			nodesAbove = new ArrayList();
 		    currNodes = new ArrayList ();

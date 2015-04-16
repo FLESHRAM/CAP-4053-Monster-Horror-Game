@@ -31,6 +31,8 @@ public class Brain : MonoBehaviour {
 		saved_cont = anim.runtimeAnimatorController;
 		stat = gameObject.GetComponent ("stats") as stats;
 
+		GameObject close = closestNode ();
+		transform.position = new Vector2 (close.transform.position.x, close.transform.position.y);
 
 		stat.health = 100f;
 		targetPos = transform.position;
@@ -119,6 +121,21 @@ public class Brain : MonoBehaviour {
 	}
 
 
+	public ArrayList getVisisbleBombs()
+	{
+		ArrayList visibleBombs = new ArrayList ();
+		Collider2D[] bombs = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Bomb"));
+		
+		for(int i=0; i<bombs.Length; i++)
+		{
+			bool hit = Physics2D.Linecast(transform.position, bombs[i].transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
+			if (!hit) visibleBombs.Add (bombs[i].gameObject);
+		}
+		
+		return visibleBombs;
+	}
+
+
 	public ArrayList hidingObjects ()
 	{
 		ArrayList visible = new ArrayList ();
@@ -134,6 +151,29 @@ public class Brain : MonoBehaviour {
 		}
 		
 		return visible;
+	}
+
+
+
+	public GameObject closestNode()
+	{
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 3f, 1 << LayerMask.NameToLayer ("Node"));
+		GameObject mostNear = null;
+		if(nodes!=null)
+		{
+			for(int i=0; i<nodes.Length; i++)
+			{
+				if(mostNear == null) mostNear = nodes[i].gameObject;
+				
+				else
+				{
+					if(Vector3.Distance(transform.position, nodes[i].transform.position) < Vector3.Distance(transform.position, mostNear.transform.position))
+						mostNear = nodes[i].gameObject;
+				}
+			}
+	     }
+
+		return mostNear;
 	}
 
 
