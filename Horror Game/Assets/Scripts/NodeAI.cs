@@ -6,6 +6,8 @@ public class NodeAI : MonoBehaviour {
 	public GameObject start;
 	private ArrayList nodesAbove;
 	private ArrayList currNodes;
+	private float nodeShift = 0.26f;
+
 	//private float node_offset;
 
 	// Use this for initialization
@@ -30,11 +32,13 @@ public class NodeAI : MonoBehaviour {
 
 		GameObject Girl = GameObject.Find ("Girl");
 		Brain girlBrain = Girl.GetComponent("Brain") as Brain;
-		girlBrain.testSight ();
+		girlBrain.seek (girlBrain.closestNode (), girlBrain.furthestNode ());
+		//girlBrain.testSight ();
 
 		GameObject Man = GameObject.Find ("Man");
 		Brain manBrain = Man.GetComponent("Brain") as Brain;
-		manBrain.testSight ();
+		manBrain.seek (manBrain.closestNode (), manBrain.furthestNode ());
+		//manBrain.testSight ();
 
 	}
 
@@ -55,7 +59,7 @@ public class NodeAI : MonoBehaviour {
 
 		for (int i=1; i<nodes.Length; i++) 
 		{
-			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.25f, 1 << LayerMask.NameToLayer ("Obstacle"));
+			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.18f, 1 << LayerMask.NameToLayer ("Obstacle"));
 			if (obstacles.Length > 0) collisions.Add (nodes[i]);
 		}
 
@@ -94,7 +98,7 @@ public class NodeAI : MonoBehaviour {
 
 
 
-		for(float i=yBound; i>=(-1*yBound); i-=0.64f)
+		for(float i=yBound; i>=(-1*yBound); i-=nodeShift)
 		{
 			if(nodesAbove.Count > 0)
 			{
@@ -102,10 +106,10 @@ public class NodeAI : MonoBehaviour {
 			}
 
 
-			for(float j=sPos.x; j<(-1*sPos.x); j+=0.64f)
+			for(float j=sPos.x; j<(-1*sPos.x); j+=nodeShift)
 			{
 				temp = (GameObject)Instantiate (last);
-				temp.transform.position = new Vector3((float)(last.transform.position.x+0.64f), last.transform.position.y, 0);
+				temp.transform.position = new Vector3((float)(last.transform.position.x+nodeShift), last.transform.position.y, 0);
 				count++;
 				temp.name = count.ToString();
 
@@ -134,7 +138,7 @@ public class NodeAI : MonoBehaviour {
 			temp = (GameObject)Instantiate (last);
 			count++;
 			temp.name = count.ToString();
-			temp.transform.position = new Vector3(sPos.x, (float)(sPos.y-0.64f), 0);
+			temp.transform.position = new Vector3(sPos.x, (float)(sPos.y-nodeShift), 0);
 			sPos = temp.transform.position;
 			temp.transform.parent = gameObject.transform;
 			currNodes.Add (temp);

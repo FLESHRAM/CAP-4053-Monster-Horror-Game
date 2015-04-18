@@ -177,6 +177,31 @@ public class Brain : MonoBehaviour {
 	}
 
 
+
+	public GameObject furthestNode()
+	{
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
+		GameObject mostFar = null;
+		if(nodes!=null)
+		{
+			for(int i=0; i<nodes.Length; i++)
+			{
+				if(mostFar == null) mostFar = nodes[i].gameObject;
+				
+				else
+				{
+					if(Vector3.Distance(transform.position, nodes[i].transform.position) > Vector3.Distance(transform.position, mostFar.transform.position))
+						mostFar = nodes[i].gameObject;
+				}
+			}
+		}
+		
+		return mostFar;
+	}
+
+
+
+
 	public void testSight()
 	{
 		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
@@ -254,7 +279,7 @@ public class Brain : MonoBehaviour {
 
 
 
-	void seek(GameObject start, GameObject target)
+	public void seek(GameObject start, GameObject target)
 	{
 		NodeInfo info = start.GetComponent ("NodeInfo") as NodeInfo;
 		info.length = 0;
