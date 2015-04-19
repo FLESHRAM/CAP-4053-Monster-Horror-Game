@@ -23,6 +23,10 @@ public class Brain : MonoBehaviour {
 	private stats stat;
 	private RuntimeAnimatorController saved_cont;
 
+	private float walkingSpeed = 1f;
+	private float runningSpeed = 2.5f;
+	private int sprintCount = 0;
+
 	Animator anim;
 
 	// Use this for initialization
@@ -65,12 +69,16 @@ public class Brain : MonoBehaviour {
 
 		if(player != null) print("I see the Player!!!");
 
+		float speed = walkingSpeed;
+		if (sprintCount > 0) { speed = runningSpeed; sprintCount--; }
+
+
 		if(moving)
 		{
 			anim.SetBool("IsMoving", true);
 			Vector3 currPos = transform.position;
 			Vector3 target = getTarget (currPos);
-			transform.position = Vector3.Lerp (currPos, target, Time.deltaTime);
+			transform.position = Vector3.Lerp (currPos, target, speed * Time.deltaTime);
 		}
 
 		if(turning)
@@ -81,11 +89,18 @@ public class Brain : MonoBehaviour {
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
 		}
 
-		if(Vector3.Distance(transform.position, targetPos) < 0.08f) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
+		float closeEnough = 0.08f;
+		if(sprintCount > 0) closeEnough = 1f;
+		if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
 		
 		if (path.Count>0) takingPath();
 	}
 
+
+
+
+	public void sprint()
+	{ sprintCount = 50; }
 
 
 

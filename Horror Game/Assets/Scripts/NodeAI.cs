@@ -6,7 +6,7 @@ public class NodeAI : MonoBehaviour {
 	public GameObject start;
 	private ArrayList nodesAbove;
 	private ArrayList currNodes;
-	private float nodeShift = 0.26f;
+	private float nodeShift = 0.37f;
 
 	//private float node_offset;
 
@@ -33,6 +33,7 @@ public class NodeAI : MonoBehaviour {
 		GameObject Girl = GameObject.Find ("Girl");
 		Brain girlBrain = Girl.GetComponent("Brain") as Brain;
 		girlBrain.seek (girlBrain.closestNode (), girlBrain.furthestNode ());
+		girlBrain.sprint ();
 		//girlBrain.testSight ();
 
 		GameObject Man = GameObject.Find ("Man");
@@ -59,7 +60,7 @@ public class NodeAI : MonoBehaviour {
 
 		for (int i=1; i<nodes.Length; i++) 
 		{
-			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.18f, 1 << LayerMask.NameToLayer ("Obstacle"));
+			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.13f, 1 << LayerMask.NameToLayer ("Obstacle"));
 			if (obstacles.Length > 0) collisions.Add (nodes[i]);
 		}
 
