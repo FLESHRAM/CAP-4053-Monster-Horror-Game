@@ -38,7 +38,7 @@ public class Brain : MonoBehaviour {
 		GameObject close = closestNode ();
 		transform.position = new Vector2 (close.transform.position.x, close.transform.position.y);
 
-		stat.health = 100f;
+		//stat.health = 100f;
 		targetPos = transform.position;
 		moving = true;
 		turning = true;
@@ -100,8 +100,49 @@ public class Brain : MonoBehaviour {
 
 
 	public void sprint()
-	{ sprintCount = 50; }
+	{ sprintCount = 100; }
 
+
+
+
+
+
+
+	public void pickUpBomb(GameObject bomb)
+	{
+		if (stat.hasBomb == false)
+		{
+			Destroy(bomb);
+			stat.hasBomb = true;
+		}
+	}
+
+
+
+
+	public void fiddle()
+	{
+		if(stat.hasBomb == true)
+		{
+			GameObject bomb = (GameObject)Instantiate(stat.bomb);
+			bomb.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
+
+			bombFunctions bF = bomb.GetComponent("bombFunctions") as bombFunctions;
+			bF.explode();
+		}
+	}
+
+
+
+	public void hideBomb(GameObject cabinet)
+	{
+		gameObject.renderer.material.color = Color.white;
+
+		HidingObject cab = cabinet.GetComponent ("HidingObject") as HidingObject;
+		GameObject bomb = (GameObject)Instantiate (stat.bomb);
+
+		cab.setTrap (bomb);
+	}
 
 
 

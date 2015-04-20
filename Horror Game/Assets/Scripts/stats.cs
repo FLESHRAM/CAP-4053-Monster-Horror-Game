@@ -8,8 +8,14 @@ public class stats : MonoBehaviour {
 	public float health;
 	public bool isPlayer;
 	public GameObject bomb = null;
+	public bool hasBomb = false;
 
 
+	void Start()
+	{
+		health = 100f;
+		bomb = (GameObject)Resources.Load ("bomb", typeof(GameObject));
+	}
 
 	public void damage()
 	{
