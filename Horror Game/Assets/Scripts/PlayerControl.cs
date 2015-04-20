@@ -7,6 +7,7 @@ public class PlayerControl : MonoBehaviour {
 	public float moveSpeed = 5f;
 	public float turnSpeed = 50f;
 	public GameObject hitSpace;
+
 	
 	public GameObject up;
 	public GameObject down;
@@ -24,6 +25,7 @@ public class PlayerControl : MonoBehaviour {
 		anim = GetComponent ("Animator") as Animator;
 		saved_cont = anim.runtimeAnimatorController;
 		stat = gameObject.GetComponent ("stats") as stats;
+		stat.isPlayer = true;
 	}
 	
 
@@ -78,7 +80,16 @@ public class PlayerControl : MonoBehaviour {
 	{
 		attackDone = true;
 
-		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.15f, 1 << LayerMask.NameToLayer("Victim"));
+
+		Collider2D hitBomb = Physics2D.OverlapCircle (hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Bomb"));
+		if(hitBomb != null)
+		{
+			bombFunctions bomb = hitBomb.gameObject.GetComponent("bombFunctions") as bombFunctions;
+			bomb.explode();
+		}
+
+
+		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Victim"));
 		if(hit!=null)
 		   {
 			 Brain temp = hit.gameObject.GetComponent("Brain") as Brain;
@@ -95,6 +106,18 @@ public class PlayerControl : MonoBehaviour {
 			tStats.damage();
 		   }
 	}
+
+
+
+	public void loseForm()
+	{
+		Animator player = gameObject.GetComponent<Animator> ();
+		player.runtimeAnimatorController = saved_cont;
+
+		SpriteRenderer r = gameObject.GetComponent ("SpriteRenderer") as SpriteRenderer;
+		r.material.color = Color.white;
+	}
+
 
 
 	public void transformation(Animator Monster)

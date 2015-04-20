@@ -23,6 +23,10 @@ public class Brain : MonoBehaviour {
 	private stats stat;
 	private RuntimeAnimatorController saved_cont;
 
+	private float walkingSpeed = 1f;
+	private float runningSpeed = 2.5f;
+	private int sprintCount = 0;
+
 	Animator anim;
 
 	// Use this for initialization
@@ -31,8 +35,10 @@ public class Brain : MonoBehaviour {
 		saved_cont = anim.runtimeAnimatorController;
 		stat = gameObject.GetComponent ("stats") as stats;
 
+		GameObject close = closestNode ();
+		transform.position = new Vector2 (close.transform.position.x, close.transform.position.y);
 
-		stat.health = 100f;
+		//stat.health = 100f;
 		targetPos = transform.position;
 		moving = true;
 		turning = true;
@@ -63,12 +69,16 @@ public class Brain : MonoBehaviour {
 
 		if(player != null) print("I see the Player!!!");
 
+		float speed = walkingSpeed;
+		if (sprintCount > 0) { speed = runningSpeed; sprintCount--; }
+
+
 		if(moving)
 		{
 			anim.SetBool("IsMoving", true);
 			Vector3 currPos = transform.position;
 			Vector3 target = getTarget (currPos);
-			transform.position = Vector3.Lerp (currPos, target, Time.deltaTime);
+			transform.position = Vector3.Lerp (currPos, target, speed * Time.deltaTime);
 		}
 
 		if(turning)
@@ -79,12 +89,60 @@ public class Brain : MonoBehaviour {
 			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
 		}
 
-		if(Vector3.Distance(transform.position, targetPos) < 0.08f) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
+		float closeEnough = 0.08f;
+		if(sprintCount > 0) closeEnough = 1f;
+		if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
 		
 		if (path.Count>0) takingPath();
 	}
 
 
+
+
+	public void sprint()
+	{ sprintCount = 100; }
+
+
+
+
+
+
+
+	public void pickUpBomb(GameObject bomb)
+	{
+		if (stat.hasBomb == false)
+		{
+			Destroy(bomb);
+			stat.hasBomb = true;
+		}
+	}
+
+
+
+
+	public void fiddle()
+	{
+		if(stat.hasBomb == true)
+		{
+			GameObject bomb = (GameObject)Instantiate(stat.bomb);
+			bomb.transform.position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
+
+			bombFunctions bF = bomb.GetComponent("bombFunctions") as bombFunctions;
+			bF.explode();
+		}
+	}
+
+
+
+	public void hideBomb(GameObject cabinet)
+	{
+		gameObject.renderer.material.color = Color.white;
+
+		HidingObject cab = cabinet.GetComponent ("HidingObject") as HidingObject;
+		GameObject bomb = (GameObject)Instantiate (stat.bomb);
+
+		cab.setTrap (bomb);
+	}
 
 
 
@@ -119,6 +177,21 @@ public class Brain : MonoBehaviour {
 	}
 
 
+	public ArrayList getVisisbleBombs()
+	{
+		ArrayList visibleBombs = new ArrayList ();
+		Collider2D[] bombs = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Bomb"));
+		
+		for(int i=0; i<bombs.Length; i++)
+		{
+			bool hit = Physics2D.Linecast(transform.position, bombs[i].transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
+			if (!hit) visibleBombs.Add (bombs[i].gameObject);
+		}
+		
+		return visibleBombs;
+	}
+
+
 	public ArrayList hidingObjects ()
 	{
 		ArrayList visible = new ArrayList ();
@@ -135,6 +208,54 @@ public class Brain : MonoBehaviour {
 		
 		return visible;
 	}
+
+
+
+	public GameObject closestNode()
+	{
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 3f, 1 << LayerMask.NameToLayer ("Node"));
+		GameObject mostNear = null;
+		if(nodes!=null)
+		{
+			for(int i=0; i<nodes.Length; i++)
+			{
+				if(mostNear == null) mostNear = nodes[i].gameObject;
+				
+				else
+				{
+					if(Vector3.Distance(transform.position, nodes[i].transform.position) < Vector3.Distance(transform.position, mostNear.transform.position))
+						mostNear = nodes[i].gameObject;
+				}
+			}
+	     }
+
+		return mostNear;
+	}
+
+
+
+	public GameObject furthestNode()
+	{
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
+		GameObject mostFar = null;
+		if(nodes!=null)
+		{
+			for(int i=0; i<nodes.Length; i++)
+			{
+				if(mostFar == null) mostFar = nodes[i].gameObject;
+				
+				else
+				{
+					if(Vector3.Distance(transform.position, nodes[i].transform.position) > Vector3.Distance(transform.position, mostFar.transform.position))
+						mostFar = nodes[i].gameObject;
+				}
+			}
+		}
+		
+		return mostFar;
+	}
+
+
 
 
 	public void testSight()
@@ -214,7 +335,7 @@ public class Brain : MonoBehaviour {
 
 
 
-	void seek(GameObject start, GameObject target)
+	public void seek(GameObject start, GameObject target)
 	{
 		NodeInfo info = start.GetComponent ("NodeInfo") as NodeInfo;
 		info.length = 0;
@@ -326,6 +447,10 @@ public class Brain : MonoBehaviour {
 
 		allVisited.Clear ();
 	}
+
+
+
+
 
 
 	

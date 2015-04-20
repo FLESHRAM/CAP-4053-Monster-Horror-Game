@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+    <Config>
+      <PopulationSize>6</PopulationSize>
+      <SpecieCount>3</SpecieCount>
+      <Activation>
+        <Scheme>Acyclic</Scheme>
+      </Activation>
+      <ComplexityRegulationStrategy>Absolute</ComplexityRegulationStrategy>
+      <ComplexityThreshold>10</ComplexityThreshold>
+      <Description>See the code... (I'll write this latter... unless I don't, in which case, I won't).
+      </Description>
+
+    </Config>

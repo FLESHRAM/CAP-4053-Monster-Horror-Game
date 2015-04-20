@@ -39,4 +39,16 @@ public class HidingObject : MonoBehaviour {
 
 
 	}
+
+
+
+
+
+	public void setTrap(GameObject bomb)
+	{
+		bomb.renderer.material.color = Color.clear;
+		bomb.transform.position = new Vector2 (node.transform.position.x, node.transform.position.y);
+		prevSeen = bomb;
+	}
+
 }
