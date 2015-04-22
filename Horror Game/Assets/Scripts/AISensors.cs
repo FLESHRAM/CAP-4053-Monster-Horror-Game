@@ -4,17 +4,23 @@ using System.Collections.Generic;
 using SharpNeat.Phenomes;							// For the IBlackBox.InputSignalArray
 
 public class AISensors : MonoBehaviour {
-	public int SensorRange = 10;
 	public int dir = -1;							// -1: unknown; 0: N; 1: W; 2: S; 3: E
+	public int prev_dir = -1;
 	public int left_count;
 	public int right_count;
+
 	private GameObject sight;
 	private float sightRadius = 6;
+	private Brain brain;
+
+	/* For Measuing Fitness */
+	int turn_count;									// The AI will be punished for turning twice in a row
 	
 	// Use this for initialization
 	void Start () {
 		left_count = 0;
 		right_count = 0;
+		turn_count = 0;
 	}
 	
 	// Update is called once per frame
@@ -345,4 +351,85 @@ public class AISensors : MonoBehaviour {
 	}
 
 
+
+	// Converts a relative direction that an AI is about to move into an absolute direction (N,W,S,E)
+	// N: 0; E: 1; S:2; W:3;    F: 0; R: 1; B: 2; L: 3;
+	public int relativeToAbsoluteDirection(int relative)
+	{
+		if((relative + dir == 0) || (relative + dir == 4))	// Yes, this works!
+		   return 0;	// Move North (up)
+		else if((relative + dir == 1) || (relative + dir == 5))
+			return 1;	// Move East (right)
+		else if((relative + dir == 2) || (relative + dir == 6))
+			return 2;	// Move South (down)
+		else if((relative + dir == 3))
+			return 3;	// Move West (left)
+	}
+
+
+	
+	// Each of the move functions will use this...
+	private void seekAbsoluteDirection(int absolute_dir)
+	{
+		// Get the nodeInfo for the closest node
+		NodeInfo closest = brain.closestNode().GetComponent<NodeInfo>();
+		if (absolute_dir == 0) 
+			brain.seek (brain.closestNode, closest.up);
+		else if (absolute_dir == 1) 
+			brain.seek(brain.closestNode, closest.right);
+		else if (absolute_dir == 2) 
+			brain.seek (brain.closestNode, closest.down);
+		else if (absolute_dir == 3) 
+			brain.seek (brain.closestNode, closest.left);
+	}
+	
+	
+	/* ANN output functions */
+
+
+	private void moveForward()
+	{
+		// TODO: compare to the direction that we last moved in
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (0);
+		this.seekAbsoluteDirection (new_dir);
+		Debug.Log ("seeking Forward");
+	}
+
+	
+
+
+	private void moveRight()
+	{
+		// TODO: compare to the direction that we last moved in
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (1);
+		this.seekAbsoluteDirection (new_dir);
+	}
+
+
+
+	private void moveBack()
+	{
+		// TODO: compare to the direction that we last moved in
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (2);
+		this.seekAbsoluteDirection (new_dir);
+	}
+
+
+
+	private void moveLeft()
+	{
+		// TODO: compare to the direction that we last moved in
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (3);
+		this.seekAbsoluteDirection (new_dir);
+	}
+
+	
 }

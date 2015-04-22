@@ -17,10 +17,6 @@ public class tileSensor : MonoBehaviour {
 			PlayerControl p = hit.gameObject.GetComponent("PlayerControl") as PlayerControl;
 			Animator m = gameObject.GetComponentInChildren<Animator>();
 			p.transformation(m);
-
-			stats pStats = hit.gameObject.GetComponent("stats") as stats;
-			pStats.health += 100;
-			pStats.isMonster = true;
 		}
 	}
 }
