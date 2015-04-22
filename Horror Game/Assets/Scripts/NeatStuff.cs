@@ -19,6 +19,7 @@ public class NeatStuff : UnitController {
 	// Stuff for NEAT
 	bool IsRunning;
 	IBlackBox box;
+	float fitness;
 
 	// For Fitness
 	bool action_completed;						// Indicates if the last dispatched action is finished
@@ -31,6 +32,7 @@ public class NeatStuff : UnitController {
 	void Start () {
 		action_completed = true;				// There is no previous action, so just start this at true
 		top_impossible_actions = 0;
+		fitness = 0;
 	}
 	
 	// Update is called once per frame
@@ -38,6 +40,9 @@ public class NeatStuff : UnitController {
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
 			if(action_completed){
+				// Update the fitness score
+				this.SetIntermediateFitness();
+
 				// Read the sensors
 				box.InputSignalArray = ais.getInput(box.InputSignalArray);
 
@@ -62,10 +67,11 @@ public class NeatStuff : UnitController {
 		this.box = box;
 		this.IsRunning = true;
 	}
-	
-	public override float GetFitness()
+
+	// An intermediate fitness is measured after each action is completed
+	public void SetIntermediateFitness()
 	{
-		float fitness = 0;
+		fitness = this.fitness * .75f;					// Previous fitness is PARTIALLY factored into the next fitness
 
 		// Check the distance from the monster
 		float monsterD = 7 - ais.distance_from_monster;
@@ -98,9 +104,15 @@ public class NeatStuff : UnitController {
 		// For each top scoring output that is not possible, reduce the fitness by 1
 		fitness -= (top_impossible_actions * -1);
 
-		// Lastly, make sure that the fitness doesn't drop below 0
-		if (fitness > 0)
-			return fitness;
+		// Set this.fitness
+		this.fitness = fitness;
+	}
+
+	public override float GetFitness()
+	{
+		// Make sure that the fitness doesn't drop below 0
+		if (this.fitness > 0)
+			return this.fitness;
 		else
 			return 0;
 	}
