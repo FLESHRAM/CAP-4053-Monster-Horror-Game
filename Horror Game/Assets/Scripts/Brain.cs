@@ -5,6 +5,7 @@ public class Brain : MonoBehaviour {
 
 	public GameObject sight;
 	public GameObject blood;
+	public bool IsRunning;				// Set by NEAT
 	private bool isVictimGirl;
 
 	private ArrayList path = new ArrayList ();
@@ -53,52 +54,54 @@ public class Brain : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
-		//print (Vector2.Distance (transform.position, sight.transform.position));
-		ArrayList visibleNodes = getVisibleNodes ();
-		GameObject player = visiblePlayer ();
-		ArrayList objects = hidingObjects ();
-
-
-		//for(int i = 0; i<visibleNodes.Count; i++)
-		//{
-			//GameObject t = (GameObject) visibleNodes[i];
-			//print (t);
-		//}
-
-		for(int i = 0; i<objects.Count; i++)
+		if(IsRunning)
 		{
-			GameObject t = (GameObject) objects[i];
-			print (t);
+			//print (Vector2.Distance (transform.position, sight.transform.position));
+			ArrayList visibleNodes = getVisibleNodes ();
+			GameObject player = visiblePlayer ();
+			ArrayList objects = hidingObjects ();
+
+
+			//for(int i = 0; i<visibleNodes.Count; i++)
+			//{
+				//GameObject t = (GameObject) visibleNodes[i];
+				//print (t);
+			//}
+
+			for(int i = 0; i<objects.Count; i++)
+			{
+				GameObject t = (GameObject) objects[i];
+				print (t);
+			}
+
+			if(player != null) print("I see the Player!!!");
+
+			float speed = walkingSpeed;
+			if (sprintCount > 0) { speed = runningSpeed; sprintCount--; }
+
+
+			if(moving)
+			{
+				anim.SetBool("IsMoving", true);
+				Vector3 currPos = transform.position;
+				Vector3 target = getTarget (currPos);
+				transform.position = Vector3.Lerp (currPos, target, speed * Time.deltaTime);
+			}
+
+			if(turning)
+			{
+				Vector3 currPos = transform.position;
+				Vector3 target = getTarget(currPos);
+				float angle = Mathf.Atan2 (moveDir.y, moveDir.x) * Mathf.Rad2Deg;
+				transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
+			}
+
+			float closeEnough = 0.08f;
+			if(sprintCount > 0) closeEnough = 1f;
+			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
+			
+			if (path.Count>0) takingPath();
 		}
-
-		if(player != null) print("I see the Player!!!");
-
-		float speed = walkingSpeed;
-		if (sprintCount > 0) { speed = runningSpeed; sprintCount--; }
-
-
-		if(moving)
-		{
-			anim.SetBool("IsMoving", true);
-			Vector3 currPos = transform.position;
-			Vector3 target = getTarget (currPos);
-			transform.position = Vector3.Lerp (currPos, target, speed * Time.deltaTime);
-		}
-
-		if(turning)
-		{
-			Vector3 currPos = transform.position;
-			Vector3 target = getTarget(currPos);
-			float angle = Mathf.Atan2 (moveDir.y, moveDir.x) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
-		}
-
-		float closeEnough = 0.08f;
-		if(sprintCount > 0) closeEnough = 1f;
-		if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
-		
-		if (path.Count>0) takingPath();
 	}
 
 

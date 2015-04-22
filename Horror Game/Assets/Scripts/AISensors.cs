@@ -18,6 +18,12 @@ public class AISensors : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		// Set our brain!
+		brain = this.GetComponent<Brain> ();
+
+		// Testing:
+		brain.IsRunning = true;
+
 		left_count = 0;
 		right_count = 0;
 		turn_count = 0;
