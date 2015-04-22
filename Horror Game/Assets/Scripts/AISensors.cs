@@ -364,6 +364,8 @@ public class AISensors : MonoBehaviour {
 			return 2;	// Move South (down)
 		else if((relative + dir == 3))
 			return 3;	// Move West (left)
+
+		return relative;
 	}
 
 
@@ -374,13 +376,13 @@ public class AISensors : MonoBehaviour {
 		// Get the nodeInfo for the closest node
 		NodeInfo closest = brain.closestNode().GetComponent<NodeInfo>();
 		if (absolute_dir == 0) 
-			brain.seek (brain.closestNode, closest.up);
+			brain.seek (brain.closestNode(), closest.up);
 		else if (absolute_dir == 1) 
-			brain.seek(brain.closestNode, closest.right);
+			brain.seek(brain.closestNode(), closest.right);
 		else if (absolute_dir == 2) 
-			brain.seek (brain.closestNode, closest.down);
+			brain.seek (brain.closestNode(), closest.down);
 		else if (absolute_dir == 3) 
-			brain.seek (brain.closestNode, closest.left);
+			brain.seek (brain.closestNode(), closest.left);
 	}
 	
 	

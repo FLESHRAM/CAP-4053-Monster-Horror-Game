@@ -30,14 +30,17 @@ public class NodeAI : MonoBehaviour {
 			       cabinets[i].layer = 12;
 				}
 
-		GameObject Girl = GameObject.Find ("Girl");
-		Brain girlBrain = Girl.GetComponent("Brain") as Brain;
+		GameObject Victims = GameObject.Find ("Victims");
+		Brain[] Vic = Victims.GetComponentsInChildren<Brain>();
+		print (Vic [0].gameObject);
+	
+		Brain girlBrain = Vic [0];
 		girlBrain.seek (girlBrain.closestNode (), girlBrain.furthestNode ());
 		girlBrain.sprint ();
 		//girlBrain.testSight ();
 
-		GameObject Man = GameObject.Find ("Man");
-		Brain manBrain = Man.GetComponent("Brain") as Brain;
+
+		Brain manBrain = Vic [1];
 		manBrain.seek (manBrain.closestNode (), manBrain.furthestNode ());
 		//manBrain.testSight ();
 
