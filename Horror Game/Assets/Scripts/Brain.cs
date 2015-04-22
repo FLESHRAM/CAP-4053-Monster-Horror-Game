@@ -5,6 +5,8 @@ public class Brain : MonoBehaviour {
 
 	public GameObject sight;
 	public GameObject blood;
+	private bool isVictimGirl;
+
 	private ArrayList path = new ArrayList ();
 
 
@@ -31,7 +33,10 @@ public class Brain : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
 		anim = gameObject.GetComponent<Animator> ();
+		   int rand = Random.Range (1, 101);
+		   setVictim (rand);
 		saved_cont = anim.runtimeAnimatorController;
 		stat = gameObject.GetComponent ("stats") as stats;
 
@@ -105,6 +110,29 @@ public class Brain : MonoBehaviour {
 
 
 
+
+
+	public bool isGirl() { return isVictimGirl; }
+
+
+
+
+	private void setVictim(int rand) 
+	{
+		if(rand < 50)
+		{
+			isVictimGirl = true;
+			anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load ("Girl", typeof(RuntimeAnimatorController));
+			gameObject.name = "Girl";
+		}
+		
+		else if (rand > 50)
+		{
+			isVictimGirl = false;
+			anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load ("Man", typeof(RuntimeAnimatorController));
+			gameObject.name = "Man";
+		}
+	}
 
 
 

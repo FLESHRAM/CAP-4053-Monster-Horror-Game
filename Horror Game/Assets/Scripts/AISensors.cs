@@ -364,8 +364,8 @@ public class AISensors : MonoBehaviour {
 			return 2;	// Move South (down)
 		else if((relative + dir == 3))
 			return 3;	// Move West (left)
-		else
-			return -1;
+
+		return relative;
 	}
 
 
