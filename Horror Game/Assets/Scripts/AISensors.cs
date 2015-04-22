@@ -16,7 +16,13 @@ public class AISensors : MonoBehaviour {
 	/* For Measuing Fitness */
 	private int did_turn;								// Indicates if the AI changed direction for its last action
 	public int turn_count;								// Indicates the number of CONSECUTIVE turns
-	
+	public int distance_from_monster;
+	public bool see_monster;
+	public bool facing_monster;
+
+	public bool isHiding;
+	public bool isScared;								// Indicates a personallity that likes to hide
+
 	// Use this for initialization
 	void Start () {
 		// Set our brain!
@@ -25,6 +31,13 @@ public class AISensors : MonoBehaviour {
 		// Set our initial direction
 		dir = this.getDirection ();
 		prev_dir = dir;								// "-1" will cause issues...
+
+		// Initialize other stuff...
+		distance_from_monster = 7;				// Start at some maximum distance (7?)
+		see_monster = false;
+		facing_monster = false;
+		isHiding = false;
+//		isScared = brain.						// TODO:
 
 		// Testing:
 		brain.IsRunning = true;
@@ -60,6 +73,13 @@ public class AISensors : MonoBehaviour {
 //		if (direct == 3)
 //						Debug.Log ("West");
 	
+	}
+
+
+	public ISignalArray getInput(ISignalArray input){
+		// TODO: Get the value for each of the sensors and put it in 'input'
+
+		return input;
 	}
 
 
