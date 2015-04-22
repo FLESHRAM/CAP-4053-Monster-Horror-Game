@@ -14,19 +14,26 @@ public class AISensors : MonoBehaviour {
 	private Brain brain;
 
 	/* For Measuing Fitness */
-	int turn_count;									// The AI will be punished for turning twice in a row
+	private int did_turn;								// Indicates if the AI changed direction for its last action
+	public int turn_count;								// Indicates the number of CONSECUTIVE turns
 	
 	// Use this for initialization
 	void Start () {
 		// Set our brain!
 		brain = this.GetComponent<Brain> ();
 
+		// Set our initial direction
+		dir = this.getDirection ();
+		prev_dir = dir;								// "-1" will cause issues...
+
 		// Testing:
 		brain.IsRunning = true;
 
+		turn_count = 0;
 		left_count = 0;
 		right_count = 0;
 		turn_count = 0;
+		this.seekAbsoluteDirection (3);
 	}
 	
 	// Update is called once per frame
@@ -397,7 +404,8 @@ public class AISensors : MonoBehaviour {
 
 	private void moveForward()
 	{
-		// TODO: compare to the direction that we last moved in
+		this.turn_count = 0;			// It is OK to reset this if we move in the same direction twice
+		this.did_turn = false;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (0);
@@ -410,7 +418,11 @@ public class AISensors : MonoBehaviour {
 
 	private void moveRight()
 	{
-		// TODO: compare to the direction that we last moved in
+		if(this.did_turn)
+		{
+			this.turn_count++;
+		}
+		this.did_turn = true;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (1);
@@ -421,7 +433,11 @@ public class AISensors : MonoBehaviour {
 
 	private void moveBack()
 	{
-		// TODO: compare to the direction that we last moved in
+		if(this.did_turn)
+		{
+			this.turn_count++;
+		}
+		this.did_turn = true;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (2);
@@ -432,7 +448,11 @@ public class AISensors : MonoBehaviour {
 
 	private void moveLeft()
 	{
-		// TODO: compare to the direction that we last moved in
+		if(this.did_turn)
+		{
+			this.turn_count++;
+		}
+		this.did_turn = true;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (3);

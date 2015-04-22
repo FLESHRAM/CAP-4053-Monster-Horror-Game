@@ -5,8 +5,14 @@ public class Brain : MonoBehaviour {
 
 	public GameObject sight;
 	public GameObject blood;
-	public bool IsRunning;				// Set by NEAT
 	private bool isVictimGirl;
+
+	/* Neat Stuff */
+	public bool IsRunning;				// Set by NEAT
+	public bool action_completed;		// Indicates that the last commanded action is no longer in progress
+	public bool action_possible;		// Indicates that the last commanded action was possible
+
+	/* End of Neat Stuff */
 
 	private ArrayList path = new ArrayList ();
 

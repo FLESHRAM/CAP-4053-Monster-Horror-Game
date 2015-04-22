@@ -11,8 +11,7 @@ public class NeatStuff : UnitController {
 	IBlackBox box;
 
 	// Stuff for controlling the victims
-	Brain brain;
-	AISensors ais;
+	AISensors ais;								// This will control the brain
 
 	// Use this for initialization
 	void Start () {
@@ -36,9 +35,17 @@ public class NeatStuff : UnitController {
 	
 	public override float GetFitness()
 	{
+		float fitness = 0;
 		// Brandon's fitness measure, distance from goal
 		// TODO:
-		
-		return 0;
+
+		// Subtract the number of consecutive turns from the fitness
+		fitness -= ais.turn_count;
+
+		// Lastly, make sure that the fitness doesn't drop below 0
+		if (fitness > 0)
+			return fitness;
+		else
+			return 0;
 	}
 }
