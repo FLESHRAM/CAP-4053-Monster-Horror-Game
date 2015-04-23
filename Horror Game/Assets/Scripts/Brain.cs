@@ -114,7 +114,7 @@ public class Brain : MonoBehaviour {
 
 
 	public void sprint()
-	{ sprintCount = 100; }
+	{ if(sprintCount == 0) sprintCount = 100; }
 
 
 
