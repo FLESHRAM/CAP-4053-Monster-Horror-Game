@@ -4,6 +4,7 @@ using System.Collections;
 public class Brain : MonoBehaviour {
 
 	public GameObject sight;
+	public GameObject[] turnDirections;
 	public GameObject blood;
 	private bool isVictimGirl;
 
@@ -106,7 +107,7 @@ public class Brain : MonoBehaviour {
 
 			float closeEnough = 0.08f;
 			if(sprintCount > 0) closeEnough = 1f;
-			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) { anim.SetBool("IsMoving", false); action_completed = true;} }
+			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) { anim.SetBool("IsMoving", false); action_completed = true; pathing=false;} }
 			
 			if (path.Count>0) takingPath();
 		}
@@ -489,8 +490,16 @@ public class Brain : MonoBehaviour {
 	}
 
 
+	private void scanInDirection()
+	{
+
+	}
 
 
+	private void goodOlFashionAI()
+	{
+
+	}
 
 
 	
