@@ -9,8 +9,8 @@ public class Brain : MonoBehaviour {
 
 	/* Neat Stuff */
 	public bool IsRunning;				// Set by NEAT
-	public bool action_completed;		// Indicates that the last commanded action is no longer in progress
-	public bool action_possible;		// Indicates that the last commanded action was possible
+	public bool action_completed = true;		// Indicates that the last commanded action is no longer in progress
+	public bool action_possible = true;		// Indicates that the last commanded action was possible
 
 	/* End of Neat Stuff */
 
@@ -28,13 +28,13 @@ public class Brain : MonoBehaviour {
 
 	private bool moving;
 	private bool turning;
-	private bool pathing;
+	private bool pathing = false;
 	private stats stat;
 	private RuntimeAnimatorController saved_cont;
 
 	private float walkingSpeed = 1f;
 	private float runningSpeed = 2.5f;
-	private int sprintCount = 0;
+	public int sprintCount = 0;
 
 	Animator anim;
 
@@ -84,7 +84,8 @@ public class Brain : MonoBehaviour {
 			if(player != null) print("I see the Player!!!");
 
 			float speed = walkingSpeed;
-			if (sprintCount > 0) { speed = runningSpeed; sprintCount--; }
+			if (sprintCount > 0) { speed = runningSpeed; sprintCount--; if(sprintCount == 0) {sprintCount = -100;} }
+			if(sprintCount < 0) sprintCount++;
 
 
 			if(moving)
@@ -105,7 +106,7 @@ public class Brain : MonoBehaviour {
 
 			float closeEnough = 0.08f;
 			if(sprintCount > 0) closeEnough = 1f;
-			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
+			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) { anim.SetBool("IsMoving", false); action_completed = true;} }
 			
 			if (path.Count>0) takingPath();
 		}
@@ -407,6 +408,7 @@ public class Brain : MonoBehaviour {
 			if(!closedList.Contains(start)) closedList.Add (start);
 			//print ((GameObject)openList[0]);
 			start = (GameObject)openList[0];
+			pathing = true;
 		}
 
 
