@@ -54,10 +54,12 @@ public class NeatStuff : UnitController {
 				// TODO
 
 				// Testing
-				if(testing_count == 0 || 1 || 3)
+				if(testing_count == 0 || testing_count == 1 || testing_count == 3)
 					ais.moveBack();
 				if(testing_count == 2)
 					ais.moveRight();
+
+				testing_count++;
 
 			}
 			// If an action hasn't completed, we should just wait

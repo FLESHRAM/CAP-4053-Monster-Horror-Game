@@ -35,13 +35,13 @@ public class NodeAI : MonoBehaviour {
 		print (Vic [0].gameObject);
 	
 		Brain girlBrain = Vic [0];
-		girlBrain.seek (girlBrain.closestNode (), girlBrain.furthestNode ());
-		girlBrain.sprint ();
+		//girlBrain.seek (girlBrain.closestNode (), girlBrain.furthestNode ());
+		//girlBrain.sprint ();
 		//girlBrain.testSight ();
 
 
 		Brain manBrain = Vic [1];
-		manBrain.seek (manBrain.closestNode (), manBrain.furthestNode ());
+		//manBrain.seek (manBrain.closestNode (), manBrain.furthestNode ());
 		//manBrain.testSight ();
 
 	}

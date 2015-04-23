@@ -458,11 +458,12 @@ public class AISensors : MonoBehaviour {
 	}
 
 	public float hasSprintA(){
-		int sprint = brain.sprint;
-		if (sprint <= 0)
+		if (brain.sprintCount < 0)
 			return 0.0f;
-		else
+		else if (brain.sprintCount == 0)
 			return 1.0f;
+
+		else return 0.0f;
 	}
 
 	
