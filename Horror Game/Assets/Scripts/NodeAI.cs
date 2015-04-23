@@ -147,7 +147,7 @@ public class NodeAI : MonoBehaviour {
 			temp.transform.parent = gameObject.transform;
 			currNodes.Add (temp);
 			last = temp;
-			print (nodesAbove);
+			//print (nodesAbove);
 		}
 
 		if(temp!=null) Destroy (temp);

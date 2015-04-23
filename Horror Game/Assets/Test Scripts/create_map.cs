@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+
 public class create_map : MonoBehaviour {
 
 	public Transform floor_9;
@@ -32,18 +33,137 @@ public class create_map : MonoBehaviour {
 	private float increment = .64f;
 
 	private List<GameObject> wallSections = new List<GameObject>();
-
-
+	
+	int xsize = 50;
+	int ysize = 24;
+	char [,,] maze;
+	
 	// Use this for initialization
 	void Start () {
+		
+		createMaze();
+		
+		//createRandomMap();	
+	}
+	
+	void createMaze()
+	{
+		floor_patterns = new Transform[6] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8};
+		maze = new char[ysize, xsize, 2];
+		
+		for(int i = 0; i < ysize; i++)
+			for(int j = 0; j < xsize; j++)
+			{
+				maze[i,j, 0] = '_';
+				maze[i,j, 1] = 'u';
+			}	
+			
+		List<Coordinate> coordStack = new List<Coordinate>();
+		coordStack.Add(new Coordinate(0,0));
+		coordStack.Add(new Coordinate(0, 1));
+		coordStack.Add (new Coordinate(1, 0));
+		fillInMaze(coordStack);
 
-		//Create the outside square
+		for(int i = 0; i < ysize; i++)
+		{				
+			for(int j = 0; j < xsize; j++)
+			{
+				if(maze[i,j, 0] == 'f')
+					Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (j * increment + (leftBound + increment), (upperBound - increment) - (i * increment), 1.0f), Quaternion.identity);
+				else
+					Instantiate (wall_vertical, new Vector3 (j * increment + (leftBound + increment), (upperBound - increment) - (i * increment), 0.0f), Quaternion.identity);
+			}
+		}
+				
 		createBorder();
-
+	}
+	
+	void fillInMaze(List<Coordinate> coordStack)
+	{
+		if(coordStack.Count < 1)
+			return;
+	
+		int x = coordStack[0].x;
+		int y = coordStack[0].y;
+		coordStack.RemoveAt(0);
+	
+		maze[y, x, 0] = 'f';
+		maze[y, x, 1] = 'v';
+				
+		int chance = 2, chanceIncrement = 7;
+		bool added = false;
+		
+		if((y - 1) > 0)
+			if(maze[y-1, x, 1] != 'v')
+				if(Random.Range(0, chance) == 0)
+				{
+					chance *= chanceIncrement;
+					coordStack.Insert(0, new Coordinate(x, y-1));
+					added = true;
+				}
+				else
+				{
+					maze[y-1, x, 0] = 'w';
+					maze[y-1, x, 1] = 'v';
+					chance /= chanceIncrement;
+				}
+				
+		if((y + 1) < ysize)
+		   if(maze[y+1, x, 1] != 'v')
+			   if(Random.Range(0, chance) == 0)
+			   {
+					chance *= chanceIncrement;
+					coordStack.Insert(0, new Coordinate(x, y+1));
+					added = true;
+				}
+				else
+				{
+					maze[y+1, x, 0] = 'w';
+					maze[y+1, x, 1] = 'v';
+					chance /= chanceIncrement;
+				}				
+					
+		if((x + 1) < xsize)
+			if(maze[y, x+1, 1] != 'v')
+				if(Random.Range(0, chance) == 0)
+				{
+					chance *= chanceIncrement;
+					coordStack.Insert(0, new Coordinate(x+1, y));
+					added = true;					
+				}
+				else
+				{
+					maze[y, x+1, 0] = 'w';
+					maze[y, x+1, 1] = 'v';
+					chance /= chanceIncrement;
+					
+				}			
+		if((x -1) > 0)
+			if(maze[y, x-1, 1] != 'v')
+				if(Random.Range(0, chance) == 0)
+				{
+					chance *= chanceIncrement;
+					coordStack.Insert(0, new Coordinate(x-1, y));
+					added = true;					
+				}
+				else
+				{
+					maze[y, x-1, 0] = 'w';
+					maze[y, x-1, 1] = 'v';
+					chance /= chanceIncrement;
+					
+				}
+		fillInMaze(coordStack);
+	}
+	
+	void createRandomMap()
+	{
+		createBorder();
+		
 		createFloor();
 		
 		createEmptySpaces();
-
+		
 		spawnWalls();	
 	}
 
@@ -53,7 +173,7 @@ public class create_map : MonoBehaviour {
 		Instantiate (top_right_corner, new Vector3 (rightBound, upperBound, 0.0f), Quaternion.identity);
 		Instantiate (bottom_left_corner, new Vector3 (leftBound, lowerBound, 0.0f), Quaternion.identity);
 		Instantiate (bottom_right_corner, new Vector3 (rightBound, lowerBound, 0.0f), Quaternion.identity);
-		Instantiate (bottom_right_corner, new Vector3 (leftBound + 4, upperBound - 4, -1f), Quaternion.identity);
+		//Instantiate (bottom_right_corner, new Vector3 (leftBound + 4, upperBound - 4, -1f), Quaternion.identity);
 
 		//Creating the border
 		for (float x = leftBound + increment; x < 15.64f; x += increment) {
@@ -67,11 +187,11 @@ public class create_map : MonoBehaviour {
 		}
 
 		//Creating the upper left spawn area
-		for (float x = leftBound + (increment * 3); x < leftBound + 4; x += increment)
-			Instantiate (wall_horizontal, new Vector3 (x, upperBound - 4, -1f), Quaternion.identity);
+	//	for (float x = leftBound + (increment * 3); x < leftBound + 4; x += increment)
+		//	Instantiate (wall_horizontal, new Vector3 (x, upperBound - 4, -1f), Quaternion.identity);
 
-		for (float y = upperBound - increment; y > upperBound - 4; y -= increment)
-			Instantiate (wall_vertical, new Vector3 (leftBound + 4, y, -1f), Quaternion.identity);
+		//for (float y = upperBound - increment; y > upperBound - 4; y -= increment)
+			//Instantiate (wall_vertical, new Vector3 (leftBound + 4, y, -1f), Quaternion.identity);
 
 
 
@@ -208,7 +328,7 @@ public class create_map : MonoBehaviour {
 	{
 		float radius = increment;
 
-		print (x + " " + (y - radius));
+		//print (x + " " + (y - radius));
 	
 		if(Physics2D.OverlapCircle(new Vector2(x, y), .1f))
 			return false;
@@ -239,9 +359,22 @@ public class create_map : MonoBehaviour {
 		
 		return true;
 	}
+	
+	
 
 	// Update is called once per frame
 	void Update () {
 	
+	}
+	
+	public class Coordinate
+	{
+		public int x, y;
+		
+		public Coordinate(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
 	}
 }

@@ -14,7 +14,7 @@ public class AISensors : MonoBehaviour {
 	private Brain brain;
 
 	/* For Measuing Fitness */
-	private int did_turn;								// Indicates if the AI changed direction for its last action
+	private bool did_turn;								// Indicates if the AI changed direction for its last action
 	public int turn_count;								// Indicates the number of CONSECUTIVE turns
 	public int distance_from_monster;
 	public bool see_monster;

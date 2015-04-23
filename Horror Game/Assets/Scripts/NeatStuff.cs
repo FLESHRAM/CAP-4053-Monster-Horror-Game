@@ -44,7 +44,7 @@ public class NeatStuff : UnitController {
 				this.SetIntermediateFitness();
 
 				// Read the sensors
-				box.InputSignalArray = ais.getInput(box.InputSignalArray);
+//Getting errors from this				box.InputSignalArray = ais.getInput(box.InputSignalArray);
 
 				// Activate the box (evalute the input with the Neural Network)
 				box.Activate();
