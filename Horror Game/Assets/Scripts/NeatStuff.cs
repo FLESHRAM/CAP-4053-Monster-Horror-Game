@@ -28,16 +28,20 @@ public class NeatStuff : UnitController {
 	// Stuff for controlling the victims
 	AISensors ais;								// This will control the brain
 
+	private int testing_count;
+
+
 	// Use this for initialization
 	void Start () {
 		action_completed = true;				// There is no previous action, so just start this at true
 		top_impossible_actions = 0;
 		fitness = 0;
+		testing_count = 0;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		int testing_count = 0;
+
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
 			if(action_completed){
@@ -54,9 +58,9 @@ public class NeatStuff : UnitController {
 				// TODO
 
 				// Testing
-				if(testing_count == 0 || testing_count == 1 || testing_count == 3)
+				if(testing_count == 0 || testing_count == 20 || testing_count == 100)
 					ais.moveBack();
-				if(testing_count == 2)
+				if(testing_count == 50)
 					ais.moveRight();
 
 				testing_count++;
