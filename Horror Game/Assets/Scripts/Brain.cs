@@ -42,6 +42,7 @@ public class Brain : MonoBehaviour {
 	void Start () {
 
 		anim = gameObject.GetComponent<Animator> ();
+		blood = (GameObject)Resources.Load ("Blood Spill", typeof(GameObject));
 		   int rand = Random.Range (1, 101);
 		   setVictim (rand);
 		saved_cont = anim.runtimeAnimatorController;
