@@ -37,6 +37,7 @@ public class NeatStuff : UnitController {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		int testing_count = 0;
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
 			if(action_completed){
@@ -44,13 +45,20 @@ public class NeatStuff : UnitController {
 				this.SetIntermediateFitness();
 
 				// Read the sensors
-//Getting errors from this				box.InputSignalArray = ais.getInput(box.InputSignalArray);
+				//box.InputSignalArray = ais.getInput(box.InputSignalArray);
 
 				// Activate the box (evalute the input with the Neural Network)
-				box.Activate();
+				//box.Activate();
 
 				// Evaluate the output and determine the next action
 				// TODO
+
+				// Testing
+				if(testing_count == 0 || 1 || 3)
+					ais.moveBack();
+				if(testing_count == 2)
+					ais.moveRight();
+
 			}
 			// If an action hasn't completed, we should just wait
 		}

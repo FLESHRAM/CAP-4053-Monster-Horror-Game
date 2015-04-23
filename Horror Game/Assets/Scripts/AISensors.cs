@@ -85,18 +85,24 @@ public class AISensors : MonoBehaviour {
 
 
 	public ISignalArray getInput(ISignalArray input){
-		// TODO: Get the value for each of the sensors and put it in 'input'
+		// Do we see the monster?
+		// TODO
+
 		// Inputs
 		input [0] = this.getPathCount ();				// Forward path count
 		input [1] = this.glanceDirection (false, 3);
 		input [2] = this.glanceDirection (true, 3);
-		input [3] = (float) (this.back_count / 24);
+		input [3] = (float) (this.back_count / 24);		// TODO
 		input [4] = this.monsterDirection();
 		input [5] = this.seeBomb ();
 		input [6] = this.seeCabinet ();
-		input [7] = this.seePowerUp ();
-		input [8] = this.getHealth ();
-		input [9] = this.hasSprint ();
+//		input [7] = this.seePowerUp ();
+		input [7] = this.getHealth ();
+		input [8] = this.hasSprintA ();
+		if (has_bomb)
+			input [9] = 1.0f;
+		else
+			input [9] = 0.0f;
 
 		return input;
 	}
@@ -426,32 +432,37 @@ public class AISensors : MonoBehaviour {
 
 
 	/* Get Sensor Input from the Brain */
-
+	// 0 for no, 1 for yes
 	public float seeBomb(){
-		// TODO
+		if (brain.getVisisbleBombs().Count > 0)
+			return 1.0f;
 		return 0;
 	}
-
-	public float seePowerUp(){
-		// TODO
-		return 0;
-	}
+	
 
 	public float seeCabinet(){
-		// TODO
+		if (brain.hidingObjects ().Count > 0)
+			return 1.0f;
 		return 0;
 	}
 
 	public float monsterDirection(){
 		// TODO, 0 if unknown or behind, 1 if facing monster, .5 if left or right
+		// player returns null
+		return 0;
 	}
 
 	public float getHealth(){
-		return 0;
+		stats s = this.GetComponent<stats> ();
+		return s.health / 100;
 	}
 
-	public float hasSprint(){
-		return 0;
+	public float hasSprintA(){
+		int sprint = brain.sprint;
+		if (sprint <= 0)
+			return 0.0f;
+		else
+			return 1.0f;
 	}
 
 	
@@ -474,7 +485,7 @@ public class AISensors : MonoBehaviour {
 	/* ANN output functions */
 
 
-	private void moveForward()
+	public void moveForward()
 	{
 		this.turn_count = 0;			// It is OK to reset this if we move in the same direction twice
 		this.did_turn = false;
@@ -488,7 +499,7 @@ public class AISensors : MonoBehaviour {
 	
 
 
-	private void moveRight()
+	public void moveRight()
 	{
 		if(this.did_turn)
 		{
@@ -503,7 +514,7 @@ public class AISensors : MonoBehaviour {
 
 
 
-	private void moveBack()
+	public void moveBack()
 	{
 		if(this.did_turn)
 		{
@@ -518,7 +529,7 @@ public class AISensors : MonoBehaviour {
 
 
 
-	private void moveLeft()
+	public void moveLeft()
 	{
 		if(this.did_turn)
 		{
