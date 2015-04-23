@@ -490,7 +490,7 @@ public class Brain : MonoBehaviour {
 	}
 
 
-	private void scanInDirection()
+	private void scanInDirection(GameObject dir)
 	{
 
 	}
