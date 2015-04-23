@@ -74,7 +74,7 @@ public class NeatStuff : UnitController {
 		fitness = this.fitness * .75f;					// Previous fitness is PARTIALLY factored into the next fitness
 
 		// Check our health
-		fitness += 10 * (ais.getHealth);
+		fitness += 10 * (ais.getHealth());
 
 		// Check the distance from the monster
 		float monsterD = 7 - ais.distance_from_monster;
