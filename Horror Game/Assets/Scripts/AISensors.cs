@@ -8,6 +8,7 @@ public class AISensors : MonoBehaviour {
 	public int prev_dir = -1;
 	public int left_count;
 	public int right_count;
+	public int back_count;
 
 	private GameObject sight;
 	private float sightRadius = 6;
@@ -19,10 +20,15 @@ public class AISensors : MonoBehaviour {
 	public int distance_from_monster;
 	public bool see_monster;
 	public bool facing_monster;
-
+	public bool isFleeing;								// Indicates that monster was recently seen (but we are not looking at now)
+	public bool hasSprint;								// Indicates that sprint is NOT on cooldown
+	public bool isSprinting;							// Indicates 
 	public bool isHiding;
 	public bool isScared;								// Indicates a personallity that likes to hide
-
+	public bool has_bomb;
+	public bool placed_bomb;							
+	public bool is_powerful;
+	
 	// Use this for initialization
 	void Start () {
 		// Set our brain!
@@ -38,7 +44,9 @@ public class AISensors : MonoBehaviour {
 		facing_monster = false;
 		isHiding = false;
 //		isScared = brain.						// TODO:
-
+		has_bomb = false;
+		is_powerful = false;
+		
 		// Testing:
 		brain.IsRunning = true;
 
@@ -78,13 +86,24 @@ public class AISensors : MonoBehaviour {
 
 	public ISignalArray getInput(ISignalArray input){
 		// TODO: Get the value for each of the sensors and put it in 'input'
+		// Inputs
+		input [0] = this.getPathCount ();				// Forward path count
+		input [1] = this.glanceDirection (false, 3);
+		input [2] = this.glanceDirection (true, 3);
+		input [3] = (float) (this.back_count / 24);
+		input [4] = this.monsterDirection();
+		input [5] = this.seeBomb ();
+		input [6] = this.seeCabinet ();
+		input [7] = this.seePowerUp ();
+		input [8] = this.getHealth ();
+		input [9] = this.hasSprint ();
 
 		return input;
 	}
 
 
 	// Glance either left or right and check if there seems to be a path in that direction
-	public bool glanceDirection(bool right, float distance)
+	public float glanceDirection(bool right, float distance)
 	{
 		int adjust = 90;
 		if (right)
@@ -96,9 +115,9 @@ public class AISensors : MonoBehaviour {
 		RaycastHit2D hit = Physics2D.Raycast (transform.position, heading, sightRadius/2, 1 << LayerMask.NameToLayer ("Obstacle"));
 		if(hit.distance == 0)
 		{
-			return true;
+			return 1.0f;
 		}
-		return false;
+		return 0.0f;
 	}
 	
 	
@@ -118,7 +137,7 @@ public class AISensors : MonoBehaviour {
 
 	// Count the number of nodes and subtract those that are adjacent to nodes that have already been counted
 	// This doesn't work perfectly, but it seems to get counts that are good enough...
-	public int getPathCount(){
+	public float getPathCount(){
 		List<GameObject> nodes = this.getPathNodes();
 		List<GameObject> counted = new List<GameObject>();	// These are nodes that have been counted already
 		int count = 0;
@@ -275,8 +294,12 @@ public class AISensors : MonoBehaviour {
 			// We still need to place this node in counted so nodes adjacent to it aren't counted either
 			counted.Add(nodes[i]);				
 		}
-		
-		return count;
+
+		float count_norm = count / 24.0f;
+		if(count_norm < 1)
+			return count_norm;
+		else
+			return 1.0f;
 	}
 
 	// Get all the nodes that could be the start of a new path (the player can't see a wall behind the node)
@@ -401,6 +424,35 @@ public class AISensors : MonoBehaviour {
 		return relative;
 	}
 
+
+	/* Get Sensor Input from the Brain */
+
+	public float seeBomb(){
+		// TODO
+		return 0;
+	}
+
+	public float seePowerUp(){
+		// TODO
+		return 0;
+	}
+
+	public float seeCabinet(){
+		// TODO
+		return 0;
+	}
+
+	public float monsterDirection(){
+		// TODO, 0 if unknown or behind, 1 if facing monster, .5 if left or right
+	}
+
+	public float getHealth(){
+		return 0;
+	}
+
+	public float hasSprint(){
+		return 0;
+	}
 
 	
 	// Each of the move functions will use this...
