@@ -56,6 +56,7 @@ public class create_map : MonoBehaviour {
 		
 		
 		
+		while(mazeSize < 30)	
 		{
 			mazeSize = 0;
 			maze = new char[ysize, xsize, 2];
