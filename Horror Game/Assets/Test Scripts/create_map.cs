@@ -35,15 +35,16 @@ public class create_map : MonoBehaviour {
 	private List<GameObject> wallSections = new List<GameObject>();
 	
 	int mazeSize = 0; 
-	int xsize;
-	int ysize;
+	int xsize = 50;
+	int ysize = 24;
 	char [,,] maze;
 	
 	// Use this for initialization
 	void Start () {
 		
-		xsize = Random.Range(40, 101);
-		ysize = xsize / 2;
+		//For random mapsize generation
+		//xsize = Random.Range(40, 101);
+		//ysize = xsize / 2;
 		
 		createMaze();
 		
