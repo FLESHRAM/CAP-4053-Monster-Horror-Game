@@ -35,8 +35,8 @@ public class create_map : MonoBehaviour {
 	private List<GameObject> wallSections = new List<GameObject>();
 	
 	int mazeSize = 0; 
-	int xsize = 50;
-	int ysize = 25;
+	int xsize = 76;
+	int ysize = 38;
 	char [,,] maze;
 	
 	// Use this for initialization
@@ -73,8 +73,9 @@ public class create_map : MonoBehaviour {
 			coordStack.Add(new Coordinate(0, 1));
 			coordStack.Add (new Coordinate(1, 0));
 			fillInMaze(coordStack);
-		}
 
+		}
+		
 		for(int i = 0; i < ysize; i++)
 		{				
 			for(int j = 0; j < xsize; j++)
@@ -91,6 +92,7 @@ public class create_map : MonoBehaviour {
 		}
 				
 		createBorder();
+		
 	}
 	
 	void fillInMaze(List<Coordinate> coordStack)
@@ -114,6 +116,7 @@ public class create_map : MonoBehaviour {
 				{
 					chance *= chanceIncrement;
 					coordStack.Insert(0, new Coordinate(x, y-1));
+					maze[y-1, x, 1] = 'v';
 					added = true;
 					mazeSize++;
 				}
@@ -130,6 +133,7 @@ public class create_map : MonoBehaviour {
 			{
 				chance *= chanceIncrement;
 				coordStack.Insert(0, new Coordinate(x+1, y));
+				maze[y, x+1, 1] = 'v';
 				added = true;					
 				mazeSize++;
 			}
@@ -147,6 +151,7 @@ public class create_map : MonoBehaviour {
 			   {
 					chance *= chanceIncrement;
 					coordStack.Insert(0, new Coordinate(x, y+1));
+					maze[y+1, x, 1] = 'v';
 					added = true;
 					mazeSize++;
 				}
@@ -164,6 +169,7 @@ public class create_map : MonoBehaviour {
 				{
 					chance *= chanceIncrement;
 					coordStack.Insert(0, new Coordinate(x-1, y));
+					maze[y, x-1, 1] = 'v';
 					added = true;					
 					mazeSize++;
 				}
@@ -177,70 +183,6 @@ public class create_map : MonoBehaviour {
 				
 		
 		fillInMaze(coordStack);
-	}
-	
-	//Probably a bad implementation, froze unity last time I tried
-	void fillInMaze2(List<Coordinate> coordStack)
-	{
-		if(coordStack.Count < 1)
-			return;
-	
-		int x = coordStack[0].x;
-		int y = coordStack[0].y;
-		coordStack.RemoveAt(0);
-	
-		maze[y, x, 0] = 'f';
-		maze[y, x, 1] = 'v';
-				
-		int chance = 2, chanceIncrement = 4;
-		//Added and counter provide a way to break out of the while loop
-		int added = 0, newX, newY, counter = 0;
-		
-		
-		
-		while(added < 2 && counter < 4)
-		{
-			int direction = Random.Range(0, 4);
-			newY = y;
-			newX = x;			
-			//Up direction
-			if(direction == 0)
-				newY = y - 1;
-			//Down direction
-			else if(direction == 1)
-				newY = y + 1;
-			//Left direction
-			else if(direction == 2)
-				newX = x - 1;
-			//Right direction
-			else
-				newX = x + 1;
-				
-			if(newX < 0 || newX >= xsize || newY < 0 || newY > ysize)
-				continue;
-			
-			print (newX + " " + newY);
-			
-			if(maze[newY, newX, 1] == 'v')
-				continue;
-				
-			if(Random.Range(0, chance) == 0)
-			{
-				chance *= chanceIncrement;
-				coordStack.Insert(0, new Coordinate(newX, newY));
-				added++;
-			}
-			else
-			{
-				maze[newY, newX, 0] = 'w';
-				maze[newY, newX, 1] = 'v';
-				chance /= chanceIncrement;
-			}
-			
-			counter++;
-		}
-		
-		fillInMaze2(coordStack);
 	}
 	
 	void createRandomMap()
