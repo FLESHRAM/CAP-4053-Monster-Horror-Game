@@ -29,9 +29,11 @@ public class Brain : MonoBehaviour {
 
 	private bool moving;
 	private bool turning;
-	private bool pathing = false;
+	public bool pathing = false;
 	private stats stat;
 	private RuntimeAnimatorController saved_cont;
+
+	
 
 	private float walkingSpeed = 1f;
 	private float runningSpeed = 2.5f;
@@ -41,7 +43,7 @@ public class Brain : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        
 		anim = gameObject.GetComponent<Animator> ();
 		blood = (GameObject)Resources.Load ("Blood Spill", typeof(GameObject));
 		   int rand = Random.Range (1, 101);
@@ -54,9 +56,9 @@ public class Brain : MonoBehaviour {
 
 		//stat.health = 100f;
 		targetPos = transform.position;
-		moving = true;
-		turning = true;
+		IsRunning = true;
 	}
+
 
 
 
@@ -105,11 +107,14 @@ public class Brain : MonoBehaviour {
 				transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
 			}
 
+
+
+
 			float closeEnough = 0.08f;
 			if(sprintCount > 0) closeEnough = 1f;
-			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) { anim.SetBool("IsMoving", false); action_completed = true; pathing=false;} }
-			
+			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false; }
 			if (path.Count>0) takingPath();
+			else if(path.Count == 0) { anim.SetBool("IsMoving", false); action_completed = true; pathing=false;}
 		}
 	}
 
@@ -409,7 +414,6 @@ public class Brain : MonoBehaviour {
 			if(!closedList.Contains(start)) closedList.Add (start);
 			//print ((GameObject)openList[0]);
 			start = (GameObject)openList[0];
-			pathing = true;
 		}
 
 
@@ -437,7 +441,7 @@ public class Brain : MonoBehaviour {
 		}
 		print (p);
 		Cleanup ();
-
+		pathing = true;
 
 	}
 
@@ -489,17 +493,16 @@ public class Brain : MonoBehaviour {
 		allVisited.Clear ();
 	}
 
+	
 
-	private void scanInDirection(GameObject dir)
-	{
+	//public void scanInDirection(GameObject dir)
+	//{
+		//moving = false; turning = true;
+			 //onlyTurning = true;
 
-	}
-
-
-	private void goodOlFashionAI()
-	{
-
-	}
+		//originalPos = transform.position;
+		//targetPos = dir.transform.position;
+	//}
 
 
 	

@@ -58,7 +58,7 @@ public class NeatStuff : UnitController {
 				// TODO
 
 				// Testing
-				if(testing_count == 0 || testing_count == 20 || testing_count == 100)
+				if(testing_count == 0 || testing_count == 20 || testing_count == 30)
 					ais.moveBack();
 				if(testing_count == 50)
 					ais.moveRight();
