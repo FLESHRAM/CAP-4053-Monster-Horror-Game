@@ -36,7 +36,7 @@ public class create_map : MonoBehaviour {
 	
 	int mazeSize = 0; 
 	int xsize = 50;
-	int ysize = 24;
+	int ysize = 25;
 	char [,,] maze;
 	
 	// Use this for initialization
