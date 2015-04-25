@@ -152,6 +152,8 @@ public class Brain : MonoBehaviour {
 	}
 
 
+	public bool hasBomb() { return stat.hasBomb; }
+
 
 	public void pickUpBomb(GameObject bomb)
 	{
@@ -335,6 +337,10 @@ public class Brain : MonoBehaviour {
 			seek (mostNear, mostFar);
 		}
 	}
+
+
+
+	public void interruptPath() { path.Clear (); }
 
 
 

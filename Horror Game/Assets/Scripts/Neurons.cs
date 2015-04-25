@@ -23,6 +23,9 @@ public class Neurons : MonoBehaviour {
 	private ArrayList bombMemory;
 
 
+	private GameObject targetBomb;
+
+
 	private int wait;
 	private int count;
 
@@ -99,7 +102,14 @@ public class Neurons : MonoBehaviour {
 		{
 			for(int i=0; i<input.Count; i++)
 			{
-				if (!mem.Contains((GameObject)input[i])) mem.Add((GameObject)input[i]);
+				GameObject t = (GameObject)input[i];
+				bombFunctions func = t.GetComponent("bombFunctions") as bombFunctions;
+				bool markedBomb = false;
+
+				if(func != null) markedBomb = func.isMarked();
+
+				if (!mem.Contains(t) && !markedBomb) mem.Add(t);
+				else if(mem.Contains (t) && markedBomb) mem.Remove(t);
 			}
 		}
 	}
@@ -120,7 +130,35 @@ public class Neurons : MonoBehaviour {
 			if(Scanning)
 			{
 				if(count<4) { check(count); wait=20; count++;} 
-				if(count == 4) { wait=0; Scanning=false; Wandering=true;}
+				if(count == 4 && (bombMemory.Count==0 || brain.hasBomb())) { wait=0; Scanning=false; Wandering=true;}
+				else if (count == 4 && bombMemory.Count>0 && !brain.hasBomb()) 
+				{ 
+					wait=0; 
+					Scanning=false; pickingUpBomb=true; 
+
+					GameObject closestBomb = null;
+					for(int i=0; i<bombMemory.Count; i++)
+					{
+						GameObject t = (GameObject)bombMemory[i];
+
+						if(closestBomb == null) closestBomb = t;
+
+						else
+						{
+
+							if(Vector2.Distance (transform.position, t.transform.position) < Vector2.Distance(transform.position, closestBomb.transform.position))
+								closestBomb = t;
+						}
+					}
+
+					targetBomb = closestBomb;
+					bombMemory.Remove (closestBomb);
+
+					bombFunctions func = targetBomb.GetComponent("bombFunctions") as bombFunctions;
+					func.mark();
+
+					brain.seek (brain.closestNode(), func.closestNode());
+				}
 			}
 
 			if(Wandering)
@@ -146,7 +184,16 @@ public class Neurons : MonoBehaviour {
 			}
 
 
+			if(pickingUpBomb)
+			{
+				if (!brain.pathing || targetBomb==null) 
+				{
+					if(targetBomb==null) { brain.interruptPath(); }
+					else { brain.pickUpBomb(targetBomb); }
 
+					pickingUpBomb=false; Idle=true; wait=5;
+				}
+			}
 
 		}
 
