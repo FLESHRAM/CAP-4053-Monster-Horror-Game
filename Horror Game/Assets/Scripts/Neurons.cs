@@ -9,24 +9,29 @@ public class Neurons : MonoBehaviour {
 
 	private bool checkDone = false;
 
+	   // Current states for the AI
 	private bool Idle;
 	private bool Scanning;
 	private bool Wandering;
 	private bool Walking;
 	private bool pickingUpBomb;
 	private bool runningAway;
-	private bool hiding;
+	private bool Hiding;
 	private bool Panic;
 
 
-	private ArrayList hidingObjectMemory;
-	private ArrayList bombMemory;
+	    // Components of AI memory
+	private ArrayList hidingObjectMemory; // Seen hiding Objects
+	private ArrayList occupiedMem;       // hididng objects that someone else is hiding in
+	private ArrayList bombMemory;   // Bombs AI has seen 
+	private GameObject visiblePlayer;  // Holds the player if visible
+	private Vector2 lastKnownPlayerPos; // The last place the player was seen
 
 
-	private GameObject targetBomb;
+	private GameObject targetBomb; // A bomb that AI plans to pick up
 
 
-	private int wait;
+	private int wait; // Causing AI to wait a certain number of frames
 	private int count;
 
 
@@ -38,6 +43,7 @@ public class Neurons : MonoBehaviour {
 		nAI = nod.GetComponent ("NodeAI") as NodeAI;
 		brain = gameObject.GetComponent ("Brain") as Brain;
 		hidingObjectMemory = new ArrayList ();
+		occupiedMem = new ArrayList ();
 		bombMemory = new ArrayList ();
 
 
@@ -61,6 +67,9 @@ public class Neurons : MonoBehaviour {
 	
 		ArrayList tempHiding = brain.hidingObjects ();
 		ArrayList tempBombs = brain.getVisisbleBombs ();
+		visiblePlayer = brain.visiblePlayer ();
+
+		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; interruptAndRun(); }
 
 		remember (hidingObjectMemory, tempHiding);
 		remember (bombMemory, tempBombs);
@@ -108,10 +117,37 @@ public class Neurons : MonoBehaviour {
 
 				if(func != null) markedBomb = func.isMarked();
 
-				if (!mem.Contains(t) && !markedBomb) mem.Add(t);
+				if (!mem.Contains(t) && !markedBomb && !occupiedMem.Contains(t)) mem.Add(t);
 				else if(mem.Contains (t) && markedBomb) mem.Remove(t);
 			}
 		}
+	}
+
+
+
+	private void interruptAndRun()
+	{
+		wait = 0;
+		if(Idle) Idle=false;
+		if(Scanning) Scanning=false;
+		if(Wandering) Wandering=false;
+		if(Walking) { brain.interruptPath(); Walking=false; }
+		if(pickingUpBomb)
+		{
+			if(targetBomb!=null)
+			{
+				bombFunctions f = targetBomb.GetComponent("bombFunctions") as bombFunctions;
+				f.unMark();
+				bombMemory.Add (targetBomb);
+				targetBomb = null;
+			}
+
+			brain.interruptPath();
+			pickingUpBomb = false;
+		}
+
+		runningAway = true; 
+		brain.sprint ();
 	}
 
 
@@ -192,6 +228,30 @@ public class Neurons : MonoBehaviour {
 					else { brain.pickUpBomb(targetBomb); }
 
 					pickingUpBomb=false; Idle=true; wait=5;
+				}
+			}
+
+
+			if(runningAway)
+			{
+				if(hidingObjectMemory.Count>0)
+				{
+					GameObject furthest = null;
+
+					for(int i=0; i<hidingObjectMemory.Count; i++)
+					{
+						GameObject t = (GameObject)hidingObjectMemory[i];
+
+						if(furthest==null) furthest=t;
+
+						else
+						{
+							if(Vector2.Distance (t.transform.position, lastKnownPlayerPos) > Vector2.Distance(furthest.transform.position, lastKnownPlayerPos))
+								furthest=t;
+						}
+					}
+
+
 				}
 			}
 

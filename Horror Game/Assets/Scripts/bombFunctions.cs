@@ -65,6 +65,7 @@ public class bombFunctions : MonoBehaviour {
 
 
 	public void mark() { marked = true; }
+	public void unMark() { marked = false; }
 	public bool isMarked() { return marked; }
 
 }
