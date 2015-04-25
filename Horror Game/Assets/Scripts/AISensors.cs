@@ -425,7 +425,7 @@ public class AISensors : MonoBehaviour {
 	private void moveForward()
 	{
 		this.turn_count = 0;			// It is OK to reset this if we move in the same direction twice
-		this.did_turn = false;
+		this.did_turn = 1;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (0);
@@ -438,11 +438,11 @@ public class AISensors : MonoBehaviour {
 
 	private void moveRight()
 	{
-		if(this.did_turn)
+		if(this.did_turn == 1)
 		{
 			this.turn_count++;
 		}
-		this.did_turn = true;
+		this.did_turn = 1;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (1);
@@ -453,11 +453,11 @@ public class AISensors : MonoBehaviour {
 
 	private void moveBack()
 	{
-		if(this.did_turn)
+		if(this.did_turn == 1)
 		{
 			this.turn_count++;
 		}
-		this.did_turn = true;
+		this.did_turn = 1;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (2);
@@ -468,11 +468,11 @@ public class AISensors : MonoBehaviour {
 
 	private void moveLeft()
 	{
-		if(this.did_turn)
+		if(this.did_turn == 1)
 		{
 			this.turn_count++;
 		}
-		this.did_turn = true;
+		this.did_turn = 1;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (3);
