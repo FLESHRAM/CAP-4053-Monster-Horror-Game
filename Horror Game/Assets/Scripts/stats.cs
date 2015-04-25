@@ -11,7 +11,7 @@ public class stats : MonoBehaviour {
 	public bool hasBomb = false;
 
 
-	void Start()
+	void Awake()
 	{
 		health = 100f;
 		bomb = (GameObject)Resources.Load ("bomb", typeof(GameObject));

@@ -28,15 +28,20 @@ public class NeatStuff : UnitController {
 	// Stuff for controlling the victims
 	AISensors ais;								// This will control the brain
 
+	private int testing_count;
+
+
 	// Use this for initialization
 	void Start () {
 		action_completed = true;				// There is no previous action, so just start this at true
 		top_impossible_actions = 0;
 		fitness = 0;
+		testing_count = 0;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
 			if(action_completed){
@@ -47,10 +52,19 @@ public class NeatStuff : UnitController {
 				//box.InputSignalArray = ais.getInput(box.InputSignalArray);
 
 				// Activate the box (evalute the input with the Neural Network)
-				box.Activate();
+				//box.Activate();
 
 				// Evaluate the output and determine the next action
 				// TODO
+
+				// Testing
+				if(testing_count == 0 || testing_count == 20 || testing_count == 30)
+					ais.moveBack();
+				if(testing_count == 50)
+					ais.moveRight();
+
+				testing_count++;
+
 			}
 			// If an action hasn't completed, we should just wait
 		}
@@ -73,6 +87,9 @@ public class NeatStuff : UnitController {
 	{
 		fitness = this.fitness * .75f;					// Previous fitness is PARTIALLY factored into the next fitness
 
+		// Check our health
+		fitness += 10 * (ais.getHealth());
+
 		// Check the distance from the monster
 		float monsterD = 7 - ais.distance_from_monster;
 		fitness += monsterD;
@@ -84,7 +101,18 @@ public class NeatStuff : UnitController {
 			if(ais.isHiding){
 				fitness += 3;							// If we see the monster, "brave" AIs shouldn't be punished
 			}
+
+			if(!ais.hasSprint)
+				fitness -= 7;
 		}
+
+		// Check if we have sprint
+		if (ais.hasSprint)
+			fitness += 1;
+
+		// Check if we are fleeing with sprint
+		if (ais.isFleeing && ais.isSprinting)
+			fitness += 8;
 
 		// Check if we are hiding (and if we should be)
 		if (ais.isHiding && ais.isScared) {
@@ -96,6 +124,18 @@ public class NeatStuff : UnitController {
 		}else if (!ais.isHiding && !ais.isScared) {
 			fitness += 3;
 		}
+
+		// Do we have a bomb? or have we placed one?
+		if(ais.has_bomb)
+			fitness += 1;
+		if (ais.placed_bomb)
+			fitness += 3;
+
+		// Are we powerful?
+		if (ais.is_powerful)
+			fitness += 7;
+		if (ais.is_powerful && !ais.isScared)
+			fitness += 7;
 
 
 		// Subtract the number of consecutive turns from the fitness

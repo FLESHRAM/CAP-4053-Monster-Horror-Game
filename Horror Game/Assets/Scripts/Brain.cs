@@ -4,13 +4,14 @@ using System.Collections;
 public class Brain : MonoBehaviour {
 
 	public GameObject sight;
+	public GameObject[] turnDirections;
 	public GameObject blood;
 	private bool isVictimGirl;
 
 	/* Neat Stuff */
 	public bool IsRunning;				// Set by NEAT
-	public bool action_completed;		// Indicates that the last commanded action is no longer in progress
-	public bool action_possible;		// Indicates that the last commanded action was possible
+	public bool action_completed = true;		// Indicates that the last commanded action is no longer in progress
+	public bool action_possible = true;		// Indicates that the last commanded action was possible
 
 	/* End of Neat Stuff */
 
@@ -28,19 +29,21 @@ public class Brain : MonoBehaviour {
 
 	private bool moving;
 	private bool turning;
-	private bool pathing;
+	public bool pathing = false;
 	private stats stat;
 	private RuntimeAnimatorController saved_cont;
 
+	
+
 	private float walkingSpeed = 1f;
 	private float runningSpeed = 2.5f;
-	private int sprintCount = 0;
+	public int sprintCount = 0;
 
 	Animator anim;
 
 	// Use this for initialization
 	void Start () {
-
+        
 		anim = gameObject.GetComponent<Animator> ();
 		blood = (GameObject)Resources.Load ("Blood Spill", typeof(GameObject));
 		   int rand = Random.Range (1, 101);
@@ -53,9 +56,9 @@ public class Brain : MonoBehaviour {
 
 		//stat.health = 100f;
 		targetPos = transform.position;
-		moving = true;
-		turning = true;
+		IsRunning = true;
 	}
+
 
 
 
@@ -84,7 +87,8 @@ public class Brain : MonoBehaviour {
 			if(player != null) print("I see the Player!!!");
 
 			float speed = walkingSpeed;
-			if (sprintCount > 0) { speed = runningSpeed; sprintCount--; }
+			if (sprintCount > 0) { speed = runningSpeed; sprintCount--; if(sprintCount == 0) {sprintCount = -100;} }
+			if(sprintCount < 0) sprintCount++;
 
 
 			if(moving)
@@ -103,11 +107,14 @@ public class Brain : MonoBehaviour {
 				transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.Euler (0, 0, angle), 2.5f * Time.deltaTime);
 			}
 
+
+
+
 			float closeEnough = 0.08f;
 			if(sprintCount > 0) closeEnough = 1f;
-			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false;  if(path.Count == 0) anim.SetBool("IsMoving", false); }
-			
+			if(Vector3.Distance(transform.position, targetPos) < closeEnough) { moving = false; turning = false; }
 			if (path.Count>0) takingPath();
+			else if(path.Count == 0) { anim.SetBool("IsMoving", false); action_completed = true; pathing=false;}
 		}
 	}
 
@@ -434,7 +441,7 @@ public class Brain : MonoBehaviour {
 		}
 		print (p);
 		Cleanup ();
-
+		pathing = true;
 
 	}
 
@@ -486,9 +493,16 @@ public class Brain : MonoBehaviour {
 		allVisited.Clear ();
 	}
 
+	
 
+	//public void scanInDirection(GameObject dir)
+	//{
+		//moving = false; turning = true;
+			 //onlyTurning = true;
 
-
+		//originalPos = transform.position;
+		//targetPos = dir.transform.position;
+	//}
 
 
 	
