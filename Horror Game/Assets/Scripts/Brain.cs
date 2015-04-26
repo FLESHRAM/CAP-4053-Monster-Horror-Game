@@ -122,7 +122,7 @@ public class Brain : MonoBehaviour {
 
 
 	public void sprint()
-	{ if(sprintCount == 0) sprintCount = 100; }
+	{ if(sprintCount == 0) sprintCount = 250; }
 
 
 
@@ -232,7 +232,7 @@ public class Brain : MonoBehaviour {
 		for(int i=0; i<bombs.Length; i++)
 		{
 			bool hit = Physics2D.Linecast(transform.position, bombs[i].transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
-			if (!hit) visibleBombs.Add (bombs[i].gameObject);
+			if (!hit && bombs[i].gameObject.renderer.material.color!=Color.clear) visibleBombs.Add (bombs[i].gameObject);
 		}
 		
 		return visibleBombs;

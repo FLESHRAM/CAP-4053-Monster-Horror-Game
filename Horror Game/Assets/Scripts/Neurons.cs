@@ -17,18 +17,30 @@ public class Neurons : MonoBehaviour {
 	private bool pickingUpBomb;
 	private bool runningAway;
 	private bool Hiding;
+	private bool Stay;
 	private bool Panic;
+	   // Panic States
+		private bool Flee;
+	    private bool Fleeing;
+		private bool PanicHide;
+		private bool PanicHiding;
+		private bool DesperateWithBomb;
+	    private bool SuicideOnPlayer;
+		
 
 
 	    // Components of AI memory
 	private ArrayList hidingObjectMemory; // Seen hiding Objects
-	private ArrayList occupiedMem;       // hididng objects that someone else is hiding in
 	private ArrayList bombMemory;   // Bombs AI has seen 
 	private GameObject visiblePlayer;  // Holds the player if visible
 	private Vector2 lastKnownPlayerPos; // The last place the player was seen
 
-
+		
+	  // Short term memory components
 	private GameObject targetBomb; // A bomb that AI plans to pick up
+	private GameObject targetHiding; // Hiding object intended to hide within
+	private ArrayList occupiedMem;       // hididng objects that someone else is hiding in
+	private int memCount;  // For how many frames they will remember occupied
 
 
 	private int wait; // Causing AI to wait a certain number of frames
@@ -53,11 +65,12 @@ public class Neurons : MonoBehaviour {
 		Wandering = false;
 		pickingUpBomb = false;
 		runningAway = false;
-		hiding = false;
+		Hiding = false;
 		Panic = false;
 
 		wait = 0;
 		count = 0;
+		memCount = 0;
 
 	}
 	
@@ -69,10 +82,15 @@ public class Neurons : MonoBehaviour {
 		ArrayList tempBombs = brain.getVisisbleBombs ();
 		visiblePlayer = brain.visiblePlayer ();
 
-		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; interruptAndRun(); }
+		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; if(!Hiding && !runningAway && !Stay && !Panic) interruptAndRun(); }
 
 		remember (hidingObjectMemory, tempHiding);
 		remember (bombMemory, tempBombs);
+
+
+		if(memCount>0) memCount++;     
+		else if(memCount==0) occupiedMem.Clear ();
+        
 
 
 		if(nAI.nodesDone && brain.IsRunning)
@@ -101,6 +119,14 @@ public class Neurons : MonoBehaviour {
 
 		}
 	}
+
+
+
+
+	private void randomCheck()
+	{
+	}
+
 
 
 
@@ -156,13 +182,16 @@ public class Neurons : MonoBehaviour {
 	{
 		if(wait == 0)
 		{
+			  // Base Idle STATE
 			if (Idle) 
 			{
 				Scanning = true;
 				Idle = false;
 				count = 0;
 			}
-			
+
+
+			 // AI scans the area
 			if(Scanning)
 			{
 				if(count<4) { check(count); wait=20; count++;} 
@@ -187,16 +216,24 @@ public class Neurons : MonoBehaviour {
 						}
 					}
 
-					targetBomb = closestBomb;
-					bombMemory.Remove (closestBomb);
+					if(closestBomb != null)
+					{
+						targetBomb = closestBomb;
+						bombMemory.Remove (closestBomb);
+						
+						bombFunctions func = targetBomb.GetComponent("bombFunctions") as bombFunctions;
+						func.mark();
+						
+						brain.seek (brain.closestNode(), func.closestNode());
+					}
 
-					bombFunctions func = targetBomb.GetComponent("bombFunctions") as bombFunctions;
-					func.mark();
+					else { wait=0; Scanning=false; Wandering=true; }
 
-					brain.seek (brain.closestNode(), func.closestNode());
 				}
 			}
 
+
+			  // AI wanders aimlessly
 			if(Wandering)
 			{
 				int chance = Random.Range(1, 101);
@@ -214,12 +251,14 @@ public class Neurons : MonoBehaviour {
 			}
 
 
+			 // Moving to a location
 			if(Walking)
 			{
 				if (!brain.pathing) { Walking=false; Wandering=true; wait=5; }
 			}
 
 
+			 // Moving to retrieve a bomb
 			if(pickingUpBomb)
 			{
 				if (!brain.pathing || targetBomb==null) 
@@ -231,7 +270,8 @@ public class Neurons : MonoBehaviour {
 				}
 			}
 
-
+			 
+			 // Feeling in fear
 			if(runningAway)
 			{
 				if(hidingObjectMemory.Count>0)
@@ -252,6 +292,241 @@ public class Neurons : MonoBehaviour {
 					}
 
 
+					targetHiding = furthest;
+					HidingObject hide = targetHiding.GetComponent("HidingObject") as HidingObject;
+					brain.seek (brain.closestNode(), hide.node);
+					runningAway=false; Hiding=true;
+
+				}
+
+				else
+				{
+					runningAway = false;
+					Panic=true;
+						Flee=true;
+						Fleeing=false;
+					    PanicHide=false;
+					    PanicHiding=false;
+				        DesperateWithBomb=false;
+						SuicideOnPlayer=false;
+
+					check (Random.Range (0, 4));	
+					count=50;  // frames to panic in
+				}
+			}
+
+			  // Hiding in a place
+			if(Hiding)
+			{
+				if(!brain.pathing)
+				{
+					if(gameObject.renderer.material.color==Color.clear)
+					{
+						Hiding = false; Stay = true;
+						wait = 20;
+					}
+
+					else
+					{
+						Hiding=false; 
+						occupiedMem.Add(targetHiding);
+						memCount = 200;
+						targetHiding = null;
+
+						int rand = Random.Range (1, 101);
+						if(rand<84 && rand>56)
+						{
+							Hiding = false; Idle = true;
+						}
+
+						else
+						{
+							Hiding = false; runningAway = true;
+						}
+					}
+
+				}
+			}
+
+
+			  // Staying in a hiding spot
+			if(Stay)
+			{
+				if(visiblePlayer==null)
+				{
+					if(brain.hasBomb())
+					{
+						int chance = Random.Range (1, 101);
+						if(chance>15 && chance<80)
+						{
+							brain.hideBomb(targetHiding);
+						}
+
+						Stay=false; Idle=true;
+						targetHiding=null;
+					}
+				}
+
+				else wait=15;
+			}
+
+
+			if(Panic)
+			{
+				bool hold=false;
+
+				if(gameObject.renderer.material.color==Color.clear) hold=true;
+
+				if(count%2 == 0) brain.sprint ();
+				if(count>0) count--;
+
+				if(visiblePlayer!=null) count=50; // Keep freaking out
+
+
+
+				if(Flee && !brain.pathing && !hold)
+				{
+					GameObject furthest = null;
+					ArrayList visible = brain.getVisibleNodes();
+					
+					for(int i=0; i<visible.Count; i++)
+					{
+						GameObject t = (GameObject)visible[i];
+						if(furthest==null) furthest=t;
+						else
+						{
+							if(Vector2.Distance(t.transform.position, lastKnownPlayerPos) > Vector2.Distance(furthest.transform.position, lastKnownPlayerPos))
+								furthest=t;
+						}
+					}
+					
+					if(furthest!=null) { brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
+					else { check (Random.Range(0, 4)); }
+
+
+				}
+
+
+				if(Fleeing)
+				{
+                    if(!brain.pathing)
+					{
+						if(visiblePlayer == null && hidingObjectMemory.Count>0 && targetHiding==null && Vector2.Distance (transform.position, lastKnownPlayerPos) > 3f)
+						{
+							int chance = Random.Range(1, 101);
+							if(chance>5 && chance<45) { Fleeing=false; PanicHide=true; }
+							else { check (Random.Range(0, 4)); Fleeing=false; Flee=true; }
+						}
+
+						else
+						{
+							if(brain.hasBomb()) 
+							{
+								int chance = Random.Range(1, 101);
+								if(chance>67 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
+								else { check(Random.Range(0, 4)); Fleeing=false; Flee=true; }
+							}
+						}
+					}
+				}
+
+
+				if(PanicHide)
+				{
+					targetHiding = (GameObject)hidingObjectMemory[0];
+					HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
+					
+					brain.seek (brain.closestNode(), h.node);
+					PanicHide=false; PanicHiding=true;;
+				}
+
+
+				if(PanicHiding)
+				{
+
+					if(!brain.pathing)
+					{
+						if(gameObject.renderer.material.color!=Color.clear)
+						{
+							HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
+							Collider2D look = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Victim"));
+							if(look != null && look.gameObject.renderer.material.color==Color.clear)
+							{ h.forceOut(gameObject); }
+							
+							else
+							{
+								look = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Bomb"));
+								if(look != null && look.gameObject.renderer.material.color==Color.clear)
+								{
+									h.forceOut(gameObject);
+									brain.pickUpBomb(look.gameObject);
+								}
+								
+								else
+								{
+									targetHiding = null;
+									lastKnownPlayerPos = transform.position;
+									PanicHiding=false; Flee=true;
+								}
+							}
+						}
+
+
+						else { PanicHiding=false; Flee=true; }
+
+
+
+					}
+
+				}
+
+
+				if(DesperateWithBomb)
+				{
+					int chance = Random.Range(1, 101);
+					if( (chance>15 && chance<18) || (chance>72 && chance<74)) { brain.fiddle (); }
+					else if(chance>50 && chance<65 && visiblePlayer!=null) 
+					{
+						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
+						if(n!=null)
+						{
+							brain.seek(brain.closestNode(), n.gameObject);
+							DesperateWithBomb=false; SuicideOnPlayer=true;
+						}
+
+						else { check(Random.Range(0, 4)); DesperateWithBomb=false; Flee=true;}
+					}
+
+					else { check(Random.Range(0, 4)); DesperateWithBomb=false; Flee=true; }
+				}
+
+
+
+				if(SuicideOnPlayer)
+				{
+					if(!brain.pathing)
+					{
+						if(visiblePlayer!=null)
+						{
+							if(Vector2.Distance (transform.position, lastKnownPlayerPos) < 3f) { brain.fiddle (); SuicideOnPlayer=false; Flee=true; }
+							else
+							{
+								Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
+								if(n!=null) { brain.seek(brain.closestNode(), n.gameObject); }
+								else { check(Random.Range(0, 4)); SuicideOnPlayer=false; Flee=true;}
+							}
+						}
+
+						else { check(Random.Range(0, 4)); SuicideOnPlayer=false; Flee=true; }
+					}
+				}
+
+
+				if(count==0)
+				{
+					brain.interruptPath();
+					Panic=false;
+					Idle=true;
 				}
 			}
 
@@ -261,5 +536,5 @@ public class Neurons : MonoBehaviour {
 		if(wait > 0) wait--;
 
 	}
-	
+
 }

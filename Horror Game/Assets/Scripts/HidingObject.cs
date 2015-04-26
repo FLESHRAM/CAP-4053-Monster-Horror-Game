@@ -42,6 +42,14 @@ public class HidingObject : MonoBehaviour {
 
 
 
+	public void forceOut(GameObject n)
+	{
+		prevSeen.renderer.material.color = Color.white;
+		prevSeen = n;
+		n.renderer.material.color = Color.clear;
+	}
+
+
 
 
 	public void setTrap(GameObject bomb)
