@@ -153,7 +153,6 @@ public class Neurons : MonoBehaviour {
 
 	private void interruptAndRun()
 	{
-		wait = 0;
 		if(Idle) Idle=false;
 		if(Scanning) Scanning=false;
 		if(Wandering) Wandering=false;
@@ -168,7 +167,7 @@ public class Neurons : MonoBehaviour {
 				targetBomb = null;
 			}
 
-			brain.interruptPath();
+			//brain.interruptPath();
 			pickingUpBomb = false;
 		}
 
@@ -272,7 +271,7 @@ public class Neurons : MonoBehaviour {
 
 			 
 			 // Feeling in fear
-			if(runningAway)
+			if(runningAway && !brain.pathing)
 			{
 				if(hidingObjectMemory.Count>0)
 				{
@@ -295,8 +294,7 @@ public class Neurons : MonoBehaviour {
 					targetHiding = furthest;
 					HidingObject hide = targetHiding.GetComponent("HidingObject") as HidingObject;
 					brain.seek (brain.closestNode(), hide.node);
-					runningAway=false; Hiding=true;
-
+					runningAway=false; Hiding=true; wait=10;
 				}
 
 				else
@@ -320,6 +318,10 @@ public class Neurons : MonoBehaviour {
 			{
 				if(!brain.pathing)
 				{
+					HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
+					Vector2 hPos = h.node.transform.position;
+					gameObject.transform.position = new Vector2(hPos.x, hPos.y);
+
 					if(gameObject.renderer.material.color==Color.clear)
 					{
 						Hiding = false; Stay = true;
@@ -403,7 +405,7 @@ public class Neurons : MonoBehaviour {
 					if(furthest!=null) { brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
 					else { check (Random.Range(0, 4)); }
 
-
+					wait=10;
 				}
 
 
@@ -427,6 +429,8 @@ public class Neurons : MonoBehaviour {
 								else { check(Random.Range(0, 4)); Fleeing=false; Flee=true; }
 							}
 						}
+
+						wait=5;
 					}
 				}
 
@@ -437,7 +441,7 @@ public class Neurons : MonoBehaviour {
 					HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
 					
 					brain.seek (brain.closestNode(), h.node);
-					PanicHide=false; PanicHiding=true;;
+					PanicHide=false; PanicHiding=true; wait=5;
 				}
 
 
@@ -446,9 +450,13 @@ public class Neurons : MonoBehaviour {
 
 					if(!brain.pathing)
 					{
+						HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
+						Vector2 hPos = h.node.transform.position;
+						gameObject.transform.position = new Vector2(hPos.x, hPos.y);
+
 						if(gameObject.renderer.material.color!=Color.clear)
 						{
-							HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
+							//HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
 							Collider2D look = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Victim"));
 							if(look != null && look.gameObject.renderer.material.color==Color.clear)
 							{ h.forceOut(gameObject); }
@@ -474,7 +482,7 @@ public class Neurons : MonoBehaviour {
 
 						else { PanicHiding=false; Flee=true; }
 
-
+						wait=5;
 
 					}
 
@@ -498,6 +506,8 @@ public class Neurons : MonoBehaviour {
 					}
 
 					else { check(Random.Range(0, 4)); DesperateWithBomb=false; Flee=true; }
+
+					wait=5;
 				}
 
 
@@ -518,7 +528,9 @@ public class Neurons : MonoBehaviour {
 						}
 
 						else { check(Random.Range(0, 4)); SuicideOnPlayer=false; Flee=true; }
+						wait=5;
 					}
+
 				}
 
 
