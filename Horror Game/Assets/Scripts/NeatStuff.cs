@@ -67,15 +67,26 @@ public class NeatStuff : UnitController {
 
 				// Evaluate the output and determine the next action
 				int max_index = 0;							// We need to determine what is the greatest output
+				int max_possible_index = 0;					// If the max_index isn't a possible action...
 				double max_value = 0;
+				double max_possible_value = 0;
+
 				for(int i = 0; i < box.OutputCount; ++i)
 				{
 					if(box.OutputSignalArray[i] > max_value)
 					{
-						// TODO: is this action possible
 						max_index = i;
 						max_value = box.OutputSignalArray[i];
 						Debug.Log (max_index + ", " + max_value);
+					}
+					if(box.OutputSignalArray[i] > max_possible_value)
+					{
+						if(ais.actionPossible(i))
+						{
+							max_possible_index = i;
+							max_possible_value = box.OutputSignalArray[i];
+							Debug.Log (max_possible_index + ", " + max_possible_value);
+						}
 					}
 				}
 			}
