@@ -108,6 +108,62 @@ public class AISensors : MonoBehaviour {
 	}
 
 
+	/* ANN output functions */
+
+	public void moveForward()
+	{
+		this.turn_count = 0;			// It is OK to reset this if we move in the same direction twice
+		this.did_turn = true;
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (0);
+		this.seekAbsoluteDirection (new_dir);
+		Debug.Log ("seeking Forward");
+	}
+
+	public void moveRight()
+	{
+		if(this.did_turn)
+		{
+			this.turn_count++;
+		}
+		this.did_turn = true;
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (1);
+		this.seekAbsoluteDirection (new_dir);
+	}
+
+	public void moveBack()
+	{
+		if(this.did_turn)
+		{
+			this.turn_count++;
+		}
+		this.did_turn = true;
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (2);
+		this.seekAbsoluteDirection (new_dir);
+	}
+
+	public void moveLeft()
+	{
+		if(this.did_turn)
+		{
+			this.turn_count++;
+		}
+		this.did_turn = true;
+		this.prev_dir = this.dir;
+		// Determine which node we need to seek to
+		int new_dir = this.relativeToAbsoluteDirection (3);
+		this.seekAbsoluteDirection (new_dir);
+	}
+
+
+
+	/* Sensor Functions */
+
 	// Glance either left or right and check if there seems to be a path in that direction
 	public float glanceDirection(bool right, float distance)
 	{
@@ -126,7 +182,142 @@ public class AISensors : MonoBehaviour {
 		return 0.0f;
 	}
 	
+	public int getDirection(){
+		// Swapped 1 and 3 to be consistent with other functions
+		if (this.transform.rotation.eulerAngles.z > 45 && this.transform.rotation.eulerAngles.z <= 135)
+			return 0;	// North
+		if (this.transform.rotation.eulerAngles.z > 135 && this.transform.rotation.eulerAngles.z <= 225)
+			return 3;	// West
+		if (this.transform.rotation.eulerAngles.z > 225 && this.transform.rotation.eulerAngles.z <= 315)
+			return 2;	// South
+		return 1;		// East
+		
+	}
+
+	// Converts a relative direction that an AI is about to move into an absolute direction (N,W,S,E)
+	// N: 0; E: 1; S:2; W:3;    F: 0; R: 1; B: 2; L: 3;
+	public int relativeToAbsoluteDirection(int relative)
+	{
+		if((relative + dir == 0) || (relative + dir == 4))	// Yes, this works!
+			return 0;	// Move North (up)
+		else if((relative + dir == 1) || (relative + dir == 5))
+			return 1;	// Move East (right)
+		else if((relative + dir == 2) || (relative + dir == 6))
+			return 2;	// Move South (down)
+		else if((relative + dir == 3))
+			return 3;	// Move West (left)
+		
+		return relative;
+	}
+
+	/* Get Sensor Input from the Brain */
+	// 0 for no, 1 for yes
+	public float seeBomb(){
+		if (brain.getVisisbleBombs().Count > 0)
+			return 1.0f;
+		return 0;
+	}
+
+	public float seeCabinet(){
+		if (brain.hidingObjects ().Count > 0)
+			return 1.0f;
+		return 0;
+	}
 	
+	public float monsterDirection(){
+		// TODO, 0 if unknown or behind, 1 if facing monster, .5 if left or right
+		// player returns null
+		return 0;
+	}
+	
+	public float getHealth(){
+		stats s = this.GetComponent<stats> ();
+		return s.health / 100;
+	}
+	
+	public float hasSprintA(){
+		if (brain.sprintCount < 0)
+			return 0.0f;
+		else if (brain.sprintCount == 0)
+			return 1.0f;
+		
+		else return 0.0f;
+	}
+
+	// Determines if the action indicated by the given action code is possible to do
+	public bool actionPossible(int action){
+		// Action 0: move forward; Action 1: move right; Action 2; move backward; Action 3 move left
+		if(action < 4)
+		{
+			int abs_dir = this.relativeToAbsoluteDirection;	// 'move' functions use absolute directions
+
+			// Can we move North?
+			if(abs_dir == 0)
+			{
+				if(brain.closestNode().GetComponent<NodeInfo>().up != null)
+					return true;
+				else
+					return false;
+			}
+			// Can we move East?
+			if(abs_dir == 1)
+			{
+				if(brain.closestNode().GetComponent<NodeInfo>().right != null)
+					return true;
+				else
+					return false;
+			}
+			// Can we move South?
+			if(abs_dir == 2)
+			{
+				if(brain.closestNode().GetComponent<NodeInfo>().down != null)
+					return true;
+				else
+					return false;
+			}
+			// Can we move East?
+			if(abs_dir == 3)
+			{
+				if(brain.closestNode().GetComponent<NodeInfo>().left != null)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		// Action 5: Sprint
+		else if (action == 4)
+		{
+			if(brain.sprintCount > 0)
+				return true;
+			else
+				return false;
+		}
+
+		// Action 6: Hide
+		else if (action == 5)
+		{
+			// Do we see any hiding objects?
+			if(brain.hidingObjects().Count > 0)
+				return true;
+			else
+				return false;
+		}
+
+		// Action 7: Pick up Bomb
+		else if (action == 6)
+		{
+			// Do we see any bombs?
+			if(brain.getVisisbleBombs().Count > 0)
+				return true;
+			else
+				return false;
+		}
+
+		// TODO
+
+	}
+
 	public List<GameObject> getVisibleNodes ()
 	{
 		List<GameObject> visible = new List<GameObject> ();
@@ -141,7 +332,7 @@ public class AISensors : MonoBehaviour {
 		return visible;
 	}
 
-	// Count the number of nodes and subtract those that are adjacent to nodes that have already been counted
+	// Count the number 		of nodes and subtract those that are adjacent to 		nodes that have already been counted
 	// This doesn't work perfectly, but it seems to get counts that are good enough...
 	public float getPathCount(){
 		List<GameObject> nodes = this.getPathNodes();
@@ -308,6 +499,10 @@ public class AISensors : MonoBehaviour {
 			return 1.0f;
 	}
 
+
+
+	/* Private Functions */
+
 	// Get all the nodes that could be the start of a new path (the player can't see a wall behind the node)
 	private List<GameObject> getPathNodes()
 	{
@@ -400,72 +595,6 @@ public class AISensors : MonoBehaviour {
 		}
 	}
 
-	public int getDirection(){
-		// Swapped 1 and 3 to be consistent with other functions
-		if (this.transform.rotation.eulerAngles.z > 45 && this.transform.rotation.eulerAngles.z <= 135)
-			return 0;	// North
-		if (this.transform.rotation.eulerAngles.z > 135 && this.transform.rotation.eulerAngles.z <= 225)
-			return 3;	// West
-		if (this.transform.rotation.eulerAngles.z > 225 && this.transform.rotation.eulerAngles.z <= 315)
-			return 2;	// South
-		return 1;		// East
-		
-	}
-
-
-
-	// Converts a relative direction that an AI is about to move into an absolute direction (N,W,S,E)
-	// N: 0; E: 1; S:2; W:3;    F: 0; R: 1; B: 2; L: 3;
-	public int relativeToAbsoluteDirection(int relative)
-	{
-		if((relative + dir == 0) || (relative + dir == 4))	// Yes, this works!
-		   return 0;	// Move North (up)
-		else if((relative + dir == 1) || (relative + dir == 5))
-			return 1;	// Move East (right)
-		else if((relative + dir == 2) || (relative + dir == 6))
-			return 2;	// Move South (down)
-		else if((relative + dir == 3))
-			return 3;	// Move West (left)
-
-		return relative;
-	}
-
-
-	/* Get Sensor Input from the Brain */
-	// 0 for no, 1 for yes
-	public float seeBomb(){
-		if (brain.getVisisbleBombs().Count > 0)
-			return 1.0f;
-		return 0;
-	}
-	
-
-	public float seeCabinet(){
-		if (brain.hidingObjects ().Count > 0)
-			return 1.0f;
-		return 0;
-	}
-
-	public float monsterDirection(){
-		// TODO, 0 if unknown or behind, 1 if facing monster, .5 if left or right
-		// player returns null
-		return 0;
-	}
-
-	public float getHealth(){
-		stats s = this.GetComponent<stats> ();
-		return s.health / 100;
-	}
-
-	public float hasSprintA(){
-		if (brain.sprintCount < 0)
-			return 0.0f;
-		else if (brain.sprintCount == 0)
-			return 1.0f;
-
-		else return 0.0f;
-	}
-
 	
 	// Each of the move functions will use this...
 	private void seekAbsoluteDirection(int absolute_dir)
@@ -481,67 +610,4 @@ public class AISensors : MonoBehaviour {
 		else if (absolute_dir == 3) 
 			brain.seek (brain.closestNode(), closest.left);
 	}
-	
-	
-	/* ANN output functions */
-
-
-	public void moveForward()
-	{
-		this.turn_count = 0;			// It is OK to reset this if we move in the same direction twice
-		this.did_turn = true;
-		this.prev_dir = this.dir;
-		// Determine which node we need to seek to
-		int new_dir = this.relativeToAbsoluteDirection (0);
-		this.seekAbsoluteDirection (new_dir);
-		Debug.Log ("seeking Forward");
-	}
-
-	
-
-
-	public void moveRight()
-	{
-		if(this.did_turn)
-		{
-			this.turn_count++;
-		}
-		this.did_turn = true;
-		this.prev_dir = this.dir;
-		// Determine which node we need to seek to
-		int new_dir = this.relativeToAbsoluteDirection (1);
-		this.seekAbsoluteDirection (new_dir);
-	}
-
-
-
-	public void moveBack()
-	{
-		if(this.did_turn)
-		{
-			this.turn_count++;
-		}
-		this.did_turn = true;
-		this.prev_dir = this.dir;
-		// Determine which node we need to seek to
-		int new_dir = this.relativeToAbsoluteDirection (2);
-		this.seekAbsoluteDirection (new_dir);
-	}
-
-
-
-	public void moveLeft()
-	{
-		if(this.did_turn)
-		{
-			this.turn_count++;
-		}
-		this.did_turn = true;
-		this.prev_dir = this.dir;
-		// Determine which node we need to seek to
-		int new_dir = this.relativeToAbsoluteDirection (3);
-		this.seekAbsoluteDirection (new_dir);
-	}
-
-	
 }
