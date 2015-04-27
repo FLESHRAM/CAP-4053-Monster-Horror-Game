@@ -7,7 +7,7 @@ public class ObjectSpawner : MonoBehaviour {
 	private int bombSpawnThresh = 51;
 	private int spawnThresh = 50;
 	private int demonTileSpawn = 7;
-	private int victimsSpawn = 4;
+	private int victimsSpawn = 10;
 
 
 
@@ -38,7 +38,7 @@ public class ObjectSpawner : MonoBehaviour {
 			{
 				if(hasPatternOne(nodes[i]) && !bomb) { Spawn(nodes[i], bomb, Bomb, Cabinet, 90); }
 				else if(hasPatternTwo(nodes[i]) && bomb) { Spawn(nodes[i], bomb, Bomb, Cabinet, 0); }
-				else if (hasPatternThree(nodes[i]) && victims>0) { if((Random.Range (1, 101))>85) { spawnVictim(nodes[i]); victims--; } }
+				else if (hasPatternThree(nodes[i]) && victims>0) { if((Random.Range (1, 101))>30) { spawnVictim(nodes[i]); victims--; } }
 				else if(hasPatternFour(nodes[i]) && player>0) { spawnPlayer(nodes[i]); player--; }
 				else if (hasPatternFive(nodes[i]) && (Random.Range (1, 101))<demonTileSpawn) { Spawn(nodes[i], true, Tile, Cabinet, 0); }
 			}
