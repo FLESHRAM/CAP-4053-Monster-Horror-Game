@@ -26,6 +26,9 @@ public class NodeAI_2 : MonoBehaviour {
 		currNodes = new ArrayList ();
 		generateNodes ();
 		deleteCollisions();
+
+		ObjectSpawner spawner = GetComponent ("ObjectSpawner") as ObjectSpawner;
+		spawner.fragmentAnalyzer ();
 		
 		GameObject[] cabinets = GameObject.FindGameObjectsWithTag("Cabinet");
 		for(int i=0; i<cabinets.Length; i++)
