@@ -260,7 +260,7 @@ public class Brain : MonoBehaviour {
 
 	public GameObject closestNode()
 	{
-		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 3f, 1 << LayerMask.NameToLayer ("Node"));
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 0.5f, 1 << LayerMask.NameToLayer ("Node"));
 		GameObject mostNear = null;
 		if(nodes!=null)
 		{
@@ -340,7 +340,8 @@ public class Brain : MonoBehaviour {
 
 
 
-	public void interruptPath() { path.Clear (); }
+	public void interruptPath() 
+	{ path.Clear (); moving=false; turning=false; pathing = false; targetPos=gameObject.transform.position; print ("Path Interrupt, Path Count = " + path.Count); }
 
 
 
@@ -385,7 +386,18 @@ public class Brain : MonoBehaviour {
 
 
 
+	public void printPath ()
+	{
+		string p = "";
+		for (int i=0; i<path.Count; i++) {
+		p += (GameObject)path[i] + " ";		
+		}
+		print (p);
+	}
 
+
+
+	 // A* pathfinding from one node to another
 	public void seek(GameObject start, GameObject target)
 	{
 		NodeInfo info = start.GetComponent ("NodeInfo") as NodeInfo;
@@ -431,21 +443,12 @@ public class Brain : MonoBehaviour {
 			NodeInfo temp = start.GetComponent("NodeInfo") as NodeInfo;
 			GameObject tN = start;
 
-		
 				start = temp.last;
-				//temp = tN.GetComponent("NodeData") as NodeData;
-				//temp.last = null;
-
 
 			if (start == null) running = false;
 		}
 		
 		path.Reverse ();
-		string p = "";
-		for (int i=0; i<path.Count; i++) {
-			p += (GameObject)path[i] + " ";		
-		}
-		print (p);
 		Cleanup ();
 		pathing = true;
 

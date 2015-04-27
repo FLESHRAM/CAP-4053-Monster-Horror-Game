@@ -44,7 +44,7 @@ public class bombFunctions : MonoBehaviour {
 
 	public GameObject closestNode()
 	{
-		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 3f, 1 << LayerMask.NameToLayer ("Node"));
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 0.5f, 1 << LayerMask.NameToLayer ("Node"));
 		GameObject mostNear = null;
 		if(nodes!=null)
 		{

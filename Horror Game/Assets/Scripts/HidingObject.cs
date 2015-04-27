@@ -7,6 +7,7 @@ public class HidingObject : MonoBehaviour {
 	public GameObject node;
 	private GameObject prevSeen;
 
+
 	// Use this for initialization
 	void Start () {
 		node = null;
