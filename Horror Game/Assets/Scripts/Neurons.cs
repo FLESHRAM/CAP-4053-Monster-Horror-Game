@@ -88,7 +88,7 @@ public class Neurons : MonoBehaviour {
 		ArrayList tempBombs = brain.getVisisbleBombs ();
 		visiblePlayer = brain.visiblePlayer ();
 
-		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; interrupt=true; }
+		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; interrupt=true; brain.sprint (); }
 
 		remember (hidingObjectMemory, tempHiding);
 		remember (bombMemory, tempBombs);
@@ -279,9 +279,13 @@ public class Neurons : MonoBehaviour {
 						else if (n.Count > 0)
 						{
 							int randIndex = Random.Range (0, n.Count-1);
-							brain.interruptPath();
-							brain.seek (brain.closestNode(), (GameObject)n[randIndex]);
-							Wandering=false; Walking=true; wait=10;
+							if(randIndex>0 && randIndex<n.Count-1)
+							{
+								brain.interruptPath();
+								brain.seek (brain.closestNode(), (GameObject)n[randIndex]);
+								Wandering=false; Walking=true; wait=10;
+							}
+
 						}
 					}
 				}
@@ -436,7 +440,7 @@ public class Neurons : MonoBehaviour {
 					else 
 					{
 						int chance = Random.Range (1, 101);
-						if(chance>50)
+						if(chance>80)
 						{
 							Stay=false; Wandering=true; wait=5;
 							targetHiding=null;
@@ -445,7 +449,7 @@ public class Neurons : MonoBehaviour {
 
 				}
 
-				else wait=20;
+				else wait=50;
 			}
 
 
@@ -502,7 +506,7 @@ public class Neurons : MonoBehaviour {
 							if(brain.hasBomb()) 
 							{
 								int chance = Random.Range(1, 101);
-								if(chance>67 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
+								if(chance>60 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
 								else { randomCheck(); Fleeing=false; Flee=true; }
 							}
 						}
@@ -569,8 +573,8 @@ public class Neurons : MonoBehaviour {
 				if(DesperateWithBomb)
 				{
 					int chance = Random.Range(1, 101);
-					if( (chance>15 && chance<18) || (chance>72 && chance<74)) { brain.fiddle (); }
-					else if(chance>50 && chance<65 && visiblePlayer!=null) 
+					if( (chance>15 && chance<18) || (chance>70 && chance<74)) { brain.fiddle (); }
+					else if(chance>45 && chance<65 && visiblePlayer!=null) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)

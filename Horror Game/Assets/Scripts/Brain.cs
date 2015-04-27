@@ -123,7 +123,7 @@ public class Brain : MonoBehaviour {
 
 
 	public void sprint()
-	{ if(sprintCount == 0) sprintCount = 250; }
+	{ if(sprintCount == 0) sprintCount = 500; }
 
 
 
