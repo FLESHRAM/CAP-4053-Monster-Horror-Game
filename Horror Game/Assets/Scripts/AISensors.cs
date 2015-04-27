@@ -489,7 +489,7 @@ public class AISensors : MonoBehaviour {
 	public void moveForward()
 	{
 		this.turn_count = 0;			// It is OK to reset this if we move in the same direction twice
-		this.did_turn = false;
+		this.did_turn = true;
 		this.prev_dir = this.dir;
 		// Determine which node we need to seek to
 		int new_dir = this.relativeToAbsoluteDirection (0);

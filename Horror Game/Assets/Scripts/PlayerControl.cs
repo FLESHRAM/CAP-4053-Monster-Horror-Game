@@ -118,7 +118,7 @@ public class PlayerControl : MonoBehaviour {
 		r.material.color = Color.white;
 	}
 
-
+    
 
 	public void transformation(Animator Monster)
 	{
@@ -133,6 +133,12 @@ public class PlayerControl : MonoBehaviour {
 		anim.SetBool ("Transform", false);
 		player.runtimeAnimatorController = transforming.runtimeAnimatorController;
 	}
+
+
+
+
+
+
 }
 
 

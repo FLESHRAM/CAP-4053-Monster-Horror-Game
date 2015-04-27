@@ -8,10 +8,12 @@ public class NodeAI : MonoBehaviour {
 	private ArrayList currNodes;
 	private float nodeShift = 0.37f;
 
+	public bool nodesDone = false;
+
 	//private float node_offset;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
 		//CircleCollider2D circ = start.GetComponent<CircleCollider2D> ();
 		//node_offset = circ.radius * 2;
@@ -34,7 +36,11 @@ public class NodeAI : MonoBehaviour {
 		Brain[] Vic = Victims.GetComponentsInChildren<Brain>();
 		print (Vic [0].gameObject);
 	
+
+		nodesDone = true;
+
 		Brain girlBrain = Vic [0];
+
 		//girlBrain.seek (girlBrain.closestNode (), girlBrain.furthestNode ());
 		//girlBrain.sprint ();
 		//girlBrain.testSight ();

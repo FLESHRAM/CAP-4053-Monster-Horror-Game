@@ -23,6 +23,8 @@ public class create_map_2 : MonoBehaviour {
 	public Transform bottom_left_corner;
 	
 	private Transform[] floor_patterns;
+
+	private float[] point = new float[2];
 	
 	private int wallResources = 2000;
 	private float leftBound = -16;
@@ -35,8 +37,8 @@ public class create_map_2 : MonoBehaviour {
 	
 		//Create the outside square
 		createBorder();
-
 		createFloor();
+		drawWall (-9.59f, 4.16f, 1, 5);
 	}
 
 	void createBorder()
@@ -68,6 +70,42 @@ public class create_map_2 : MonoBehaviour {
 		for (float y = upperBound - increment; y > -7.64f; y -= increment)
 			for (float x = leftBound + increment; x < 15.64f; x += increment)
 				Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 1.0f), Quaternion.identity);
+	}
+
+	void drawWall(float sx, float sy, int dir, int len)
+	{
+		float stepx = 0.0f;
+		float stepy = 0.0f;
+
+		if (dir == 0) {stepx = 0.0f; stepy = 0.64f;} //Up
+		if (dir == 1) {stepx = -0.64f; stepy = 0.0f;} //Left
+		if (dir == 2) {stepx = 0.64f; stepy = 0.0f;} //Right
+		if (dir == 3) {stepx = 0.0f; stepy = -0.64f;} //Down
+
+		float currx = sx;
+		float curry = sy;
+
+		for (float i = 0.64f; i < len; i += 0.64f) 
+		{
+			if (dir == 0 || dir == 3)
+			{
+				Instantiate (wall_vertical, new Vector3 (currx, curry, 0.0f), Quaternion.identity);
+			}
+			else if (dir == 1 || dir == 2)
+			{
+				Instantiate (wall_horizontal, new Vector3 (currx, curry, 0.0f), Quaternion.identity);
+			}
+
+			currx += stepx;
+			curry += stepy;
+		}
+	}
+
+	void selectWallStart(int granularity)
+	{
+		float tempSX;
+		float tempSY;
+		float xTarget;
 	}
 	
 

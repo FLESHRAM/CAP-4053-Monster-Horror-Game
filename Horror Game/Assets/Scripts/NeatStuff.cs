@@ -29,15 +29,20 @@ public class NeatStuff : UnitController {
 	// Stuff for controlling the victims
 	AISensors ais;								// This will control the brain
 
+	private int testing_count;
+
+
 	// Use this for initialization
 	void Start () {
 		action_completed = true;				// There is no previous action, so just start this at true
 		top_impossible_actions = 0;
 		fitness = 0;
+		testing_count = 0;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		IsRunning = false;		// So that this doesn't interfer with other stuff
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
 			if(action_completed){
@@ -45,14 +50,14 @@ public class NeatStuff : UnitController {
 				this.SetIntermediateFitness();
 
 				// Read the sensors
-				box.InputSignalArray = ais.getInput(box.InputSignalArray);
+				ISignalArray input = ais.getInput(box.InputSignalArray);
 
 				// Activate the box (evalute the input with the Neural Network)
 				box.Activate();
 
 				// Evaluate the output and determine the next action
 				int max_index = 0;							// We need to determine what is the greatest output
-				float max_value = 0;
+				double max_value = 0;
 				for(int i = 0; i < box.OutputCount; ++i)
 				{
 					if(box.OutputSignalArray[i] > max_value)
@@ -63,8 +68,6 @@ public class NeatStuff : UnitController {
 						Debug.Log (max_index + ", " + max_value);
 					}
 				}
-
-
 			}
 			// If an action hasn't completed, we should just wait
 		}
