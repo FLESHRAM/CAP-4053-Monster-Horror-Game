@@ -29,6 +29,8 @@ public class Neurons : MonoBehaviour {
 	    private bool SuicideOnPlayer;
 
 
+	private bool attacked = false;
+	private GameObject lastAttacked = null;
 	private bool interrupt;   // Signaling that player was spotted
 		
 
@@ -88,7 +90,21 @@ public class Neurons : MonoBehaviour {
 		ArrayList tempBombs = brain.getVisisbleBombs ();
 		visiblePlayer = brain.visiblePlayer ();
 
-		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; interrupt=true; }
+		if(visiblePlayer != null) 
+		{ lastKnownPlayerPos = visiblePlayer.transform.position; interrupt=true; brain.sprint (); attacked=false; lastAttacked=null; }
+
+		else 
+		{
+			if(attacked && lastAttacked!=null)
+			{
+				visiblePlayer = lastAttacked;
+				lastKnownPlayerPos = lastAttacked.transform.position;
+				interrupt = true;
+				brain.sprint ();
+				attacked = false;
+				lastAttacked=null;
+			}
+		}
 
 		remember (hidingObjectMemory, tempHiding);
 		remember (bombMemory, tempBombs);
@@ -108,11 +124,17 @@ public class Neurons : MonoBehaviour {
 	}
 
 
+	public void seePlayer(GameObject p)
+	{
+		attacked = true;
+		lastAttacked = p;
+	}
+
 
 	// UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3
 	private void check(int dir)
 	{
-		print ("Check called");
+		//print ("Check called");
 		GameObject n = brain.closestNode ();
 		NodeInfo nI;
 		if(n!=null)
@@ -244,7 +266,7 @@ public class Neurons : MonoBehaviour {
 								GameObject close1 = brain.closestNode();
 								GameObject close2 = func.closestNode();
 
-								print ("Bomb Path from "+close1+" to "+close2);
+								//print ("Bomb Path from "+close1+" to "+close2);
 
 								brain.interruptPath();
 								brain.seek (close1, close2);
@@ -278,9 +300,14 @@ public class Neurons : MonoBehaviour {
 						if(n.Count == 0) { Wandering=false; Idle=true; }
 						else if (n.Count > 0)
 						{
-							brain.interruptPath();
-							brain.seek (brain.closestNode(), (GameObject)n[Random.Range (0, n.Count)]);
-							Wandering=false; Walking=true; wait=10;
+							int randIndex = Random.Range (0, n.Count-1);
+							if(randIndex>0 && randIndex<n.Count-1)
+							{
+								brain.interruptPath();
+								brain.seek (brain.closestNode(), (GameObject)n[randIndex]);
+								Wandering=false; Walking=true; wait=10;
+							}
+
 						}
 					}
 				}
@@ -435,7 +462,7 @@ public class Neurons : MonoBehaviour {
 					else 
 					{
 						int chance = Random.Range (1, 101);
-						if(chance>50)
+						if(chance>80)
 						{
 							Stay=false; Wandering=true; wait=5;
 							targetHiding=null;
@@ -444,7 +471,7 @@ public class Neurons : MonoBehaviour {
 
 				}
 
-				else wait=20;
+				else wait=50;
 			}
 
 
@@ -465,7 +492,7 @@ public class Neurons : MonoBehaviour {
 				if(Flee && !brain.pathing && !hold)
 				{
 					GameObject furthest = null;
-					ArrayList visible = brain.getVisibleNodes();
+					ArrayList visible = brain.getNodesinSight();
 					
 					for(int i=0; i<visible.Count; i++)
 					{
@@ -478,7 +505,7 @@ public class Neurons : MonoBehaviour {
 						}
 					}
 					
-					if(furthest!=null) { brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
+					if(furthest!=null) {  brain.interruptPath(); brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
 					else { randomCheck(); }
 
 					wait=10;
@@ -501,7 +528,7 @@ public class Neurons : MonoBehaviour {
 							if(brain.hasBomb()) 
 							{
 								int chance = Random.Range(1, 101);
-								if(chance>67 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
+								if(chance>60 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
 								else { randomCheck(); Fleeing=false; Flee=true; }
 							}
 						}
@@ -568,8 +595,8 @@ public class Neurons : MonoBehaviour {
 				if(DesperateWithBomb)
 				{
 					int chance = Random.Range(1, 101);
-					if( (chance>15 && chance<18) || (chance>72 && chance<74)) { brain.fiddle (); }
-					else if(chance>50 && chance<65 && visiblePlayer!=null) 
+					if( (chance>15 && chance<18) || (chance>70 && chance<74)) { brain.fiddle (); }
+					else if(chance>45 && chance<65 && visiblePlayer!=null) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)

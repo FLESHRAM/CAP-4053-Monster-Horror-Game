@@ -19,6 +19,7 @@ public class PlayerControl : MonoBehaviour {
 	private RuntimeAnimatorController saved_cont;
 	private bool attackDone = false;
 	private RuntimeAnimatorController transforming;
+	private GameObject tile;
 
 	// Use this for initialization
 	void Start () {
@@ -30,7 +31,7 @@ public class PlayerControl : MonoBehaviour {
 	
 
 		
-		void Update() 
+		void FixedUpdate() 
 	{        
 
 
@@ -103,7 +104,7 @@ public class PlayerControl : MonoBehaviour {
 			 blood.transform.rotation = Quaternion.Slerp (blood.transform.rotation, Quaternion.Euler (0, 0, angle), 1f);
 
 			stats tStats = hit.gameObject.GetComponent("stats") as stats;
-			tStats.damage();
+			tStats.damage(gameObject);
 		   }
 	}
 
@@ -120,10 +121,11 @@ public class PlayerControl : MonoBehaviour {
 
     
 
-	public void transformation(RuntimeAnimatorController Monster)
+	public void transformation(RuntimeAnimatorController Monster, GameObject demonTile)
 	{
 		anim.SetBool ("Transform", true);
 		transforming = Monster;
+		tile = demonTile;
 	}
 
 
@@ -132,6 +134,7 @@ public class PlayerControl : MonoBehaviour {
 		Animator player = gameObject.GetComponent<Animator> ();
 		anim.SetBool ("Transform", false);
 		player.runtimeAnimatorController = transforming;
+		Destroy (tile);
 	}
 
 

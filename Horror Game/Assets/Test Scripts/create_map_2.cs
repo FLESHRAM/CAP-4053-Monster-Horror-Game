@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class create_map_2 : MonoBehaviour {
@@ -38,7 +38,8 @@ public class create_map_2 : MonoBehaviour {
 		//Create the outside square
 		createBorder();
 		createFloor();
-		drawWall (-9.59f, 4.16f, 1, 5);
+		//drawWall (-9.59f, 4.16f, 1, 5);
+		generateMaze (2, 8, 100);
 	}
 
 	void createBorder()
@@ -72,6 +73,22 @@ public class create_map_2 : MonoBehaviour {
 				Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 1.0f), Quaternion.identity);
 	}
 
+	void generateMaze(int minLength, int maxLength, int numWall)
+	{
+		for (int i = 0; i < numWall; i++) 
+		{		
+			attemptRandomWall (minLength, maxLength);
+		}
+	}
+
+	void attemptRandomWall(int minLength, int maxLength)
+	{
+		selectWallStart (1);
+		int dir = Random.Range (0, 4);
+		int len = Random.Range (minLength, maxLength);
+		drawWall (point [0], point [1], dir, len);
+	}
+
 	void drawWall(float sx, float sy, int dir, int len)
 	{
 		float stepx = 0.0f;
@@ -87,6 +104,10 @@ public class create_map_2 : MonoBehaviour {
 
 		for (float i = 0.64f; i < len; i += 0.64f) 
 		{
+			Debug.Log ("currx: " + currx + "   curry: " + curry + " " + checkSpot(currx, curry));
+
+			if (checkSpot(currx, curry)){ break; }
+
 			if (dir == 0 || dir == 3)
 			{
 				Instantiate (wall_vertical, new Vector3 (currx, curry, 0.0f), Quaternion.identity);
@@ -101,11 +122,60 @@ public class create_map_2 : MonoBehaviour {
 		}
 	}
 
+	bool checkSpot(float x, float y)
+	{
+		if(Physics2D.OverlapCircle(new Vector2(x, y), 0.1f, 1 << LayerMask.NameToLayer("Obstacle")))
+			return true;
+		
+		return false;			
+	}
+
 	void selectWallStart(int granularity)
 	{
 		float tempSX;
 		float tempSY;
-		float xTarget;
+		float xTarget = 32 / granularity;
+		float yTarget = 16 / granularity;
+
+		Point[] points = new Point[] 
+		{
+			new Point(-13.44f, 4.16f),
+			new Point(-13.44f, -0.3199f),
+			new Point(-13.44f, -4.7999f),
+			new Point(-11.52f, -3.5199f),
+			new Point(-9.5999f, 5.44f),
+			new Point(-9.5999f, 2.24f),
+			new Point(-9.5999f, -6.6f),
+			new Point(-8.3199f, -2.24f),
+			new Point(-6.399f, 0.96f),
+			new Point(-4.4799f, -2.24f),
+			new Point(-3.1999f, 3.52f),
+			new Point(-1.9199f, 2.24f),
+			new Point(0.64f, -4.7999f),
+			new Point(2.56f, -3.5199f),
+			new Point(4.48f, 3.52f),
+			new Point(4.48f, -0.3199f),
+			new Point(8.32f, -2.8799f),
+			new Point(9.60f, 3.52f)
+		};
+
+		int loc = Random.Range (0, points.Length);
+
+		Point p = points[loc];
+
+		point [0] = p.x;
+		point [1] = p.y;
+	}
+
+	struct Point
+	{
+		public float x, y;
+		
+		public Point(float px, float py)
+		{
+			x = px;
+			y = py;
+		}
 	}
 	
 

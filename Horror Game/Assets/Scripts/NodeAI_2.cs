@@ -64,7 +64,7 @@ public class NodeAI_2 : MonoBehaviour {
 		
 		for (int i=1; i<nodes.Length; i++) 
 		{
-			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.13f, 1 << LayerMask.NameToLayer ("Obstacle"));
+			Collider2D[] obstacles = Physics2D.OverlapCircleAll (nodes[i].transform.position, 0.12f, 1 << LayerMask.NameToLayer ("Obstacle"));
 			if (obstacles.Length > 0) collisions.Add (nodes[i]);
 		}
 		
@@ -97,7 +97,7 @@ public class NodeAI_2 : MonoBehaviour {
 		float yBound = sPos.y;
 		GameObject last = start;
 		GameObject temp = null;
-		print (-1 * xBound);
+		//print (-1 * xBound);
 		
 		
 		

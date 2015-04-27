@@ -17,10 +17,13 @@ public class stats : MonoBehaviour {
 		bomb = (GameObject)Resources.Load ("bomb", typeof(GameObject));
 	}
 
-	public void damage()
+	public void damage(GameObject Player)
 	{
 		health -= 50;
 		checkLife ();
+		Neurons n = gameObject.GetComponent ("Neurons") as Neurons;
+
+		if(n!=null) { n.seePlayer(Player); }
 	}
 
 	public void bombDamage()

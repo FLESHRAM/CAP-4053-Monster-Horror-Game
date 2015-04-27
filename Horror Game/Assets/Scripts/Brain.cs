@@ -82,10 +82,11 @@ public class Brain : MonoBehaviour {
 			for(int i = 0; i<objects.Count; i++)
 			{
 				GameObject t = (GameObject) objects[i];
-				print (t);
+				//print (t);
 			}
 
-			if(player != null) print("I see the Player!!!");
+			//if(player != null) 
+				//print("I see the Player!!!");
 
 			float speed = walkingSpeed;
 			if (sprintCount > 0) { speed = runningSpeed; sprintCount--; if(sprintCount == 0) {sprintCount = -100;} }
@@ -123,7 +124,7 @@ public class Brain : MonoBehaviour {
 
 
 	public void sprint()
-	{ if(sprintCount == 0) sprintCount = 250; }
+	{ if(sprintCount == 0) sprintCount = 500; }
 
 
 
@@ -226,10 +227,10 @@ public class Brain : MonoBehaviour {
 	{
 		GameObject player = null;
 		Collider2D p = Physics2D.OverlapCircle (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Player"));
-		if(p!=null)
+		if(p!=null && p.gameObject.renderer.material.color!=Color.clear)
 		{
 			bool hit = Physics2D.Linecast(transform.position, p.transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
-			if(hit) print ("Wall was hit");
+			//if(hit) print ("Wall was hit");
 			if (!hit) player = p.gameObject;
 		}
 
@@ -355,7 +356,7 @@ public class Brain : MonoBehaviour {
 
 
 	public void interruptPath() 
-	{ path.Clear (); moving=false; turning=false; pathing = false; targetPos=gameObject.transform.position; print ("Path Interrupt, Path Count = " + path.Count); }
+	{ path.Clear (); moving=false; turning=false; pathing = false; targetPos=gameObject.transform.position; /* print ("Path Interrupt, Path Count = " + path.Count);*/ }
 
 
 
