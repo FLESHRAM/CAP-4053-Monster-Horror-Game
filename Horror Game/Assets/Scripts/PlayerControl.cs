@@ -18,7 +18,7 @@ public class PlayerControl : MonoBehaviour {
 	private stats stat;
 	private RuntimeAnimatorController saved_cont;
 	private bool attackDone = false;
-	private Animator transforming;
+	private RuntimeAnimatorController transforming;
 
 	// Use this for initialization
 	void Start () {
@@ -118,9 +118,9 @@ public class PlayerControl : MonoBehaviour {
 		r.material.color = Color.white;
 	}
 
+    
 
-
-	public void transformation(Animator Monster)
+	public void transformation(RuntimeAnimatorController Monster)
 	{
 		anim.SetBool ("Transform", true);
 		transforming = Monster;
@@ -131,8 +131,14 @@ public class PlayerControl : MonoBehaviour {
 	{ 
 		Animator player = gameObject.GetComponent<Animator> ();
 		anim.SetBool ("Transform", false);
-		player.runtimeAnimatorController = transforming.runtimeAnimatorController;
+		player.runtimeAnimatorController = transforming;
 	}
+
+
+
+
+
+
 }
 
 

@@ -38,6 +38,7 @@ public class Brain : MonoBehaviour {
 	private float walkingSpeed = 1f;
 	private float runningSpeed = 2.5f;
 	public int sprintCount = 0;
+	public int hope = 10;			// Doesn't seem to help, or maybe... (ranges from 0 to 100)
 
 	Animator anim;
 
@@ -122,7 +123,7 @@ public class Brain : MonoBehaviour {
 
 
 	public void sprint()
-	{ if(sprintCount == 0) sprintCount = 100; }
+	{ if(sprintCount == 0) sprintCount = 250; }
 
 
 
@@ -151,6 +152,8 @@ public class Brain : MonoBehaviour {
 		}
 	}
 
+
+	public bool hasBomb() { return stat.hasBomb; }
 
 
 	public void pickUpBomb(GameObject bomb)
@@ -189,6 +192,19 @@ public class Brain : MonoBehaviour {
 		cab.setTrap (bomb);
 	}
 
+
+
+	public ArrayList getNodesinSight()
+	{
+		ArrayList n = new ArrayList ();
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
+
+
+		for(int i=0; i<nodes.Length; i++)
+		{ n.Add (nodes[i].gameObject); }
+		
+		return n;
+	}
 
 
 	public ArrayList getVisibleNodes ()
@@ -230,7 +246,7 @@ public class Brain : MonoBehaviour {
 		for(int i=0; i<bombs.Length; i++)
 		{
 			bool hit = Physics2D.Linecast(transform.position, bombs[i].transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
-			if (!hit) visibleBombs.Add (bombs[i].gameObject);
+			if (!hit && bombs[i].gameObject.renderer.material.color!=Color.clear) visibleBombs.Add (bombs[i].gameObject);
 		}
 		
 		return visibleBombs;
@@ -258,7 +274,7 @@ public class Brain : MonoBehaviour {
 
 	public GameObject closestNode()
 	{
-		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 3f, 1 << LayerMask.NameToLayer ("Node"));
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (transform.position, 0.5f, 1 << LayerMask.NameToLayer ("Node"));
 		GameObject mostNear = null;
 		if(nodes!=null)
 		{
@@ -338,6 +354,11 @@ public class Brain : MonoBehaviour {
 
 
 
+	public void interruptPath() 
+	{ path.Clear (); moving=false; turning=false; pathing = false; targetPos=gameObject.transform.position; print ("Path Interrupt, Path Count = " + path.Count); }
+
+
+
 	private void takingPath()
 	{
 		if(!moving)
@@ -379,7 +400,18 @@ public class Brain : MonoBehaviour {
 
 
 
+	public void printPath ()
+	{
+		string p = "";
+		for (int i=0; i<path.Count; i++) {
+		p += (GameObject)path[i] + " ";		
+		}
+		print (p);
+	}
 
+
+
+	 // A* pathfinding from one node to another
 	public void seek(GameObject start, GameObject target)
 	{
 		NodeInfo info = start.GetComponent ("NodeInfo") as NodeInfo;
@@ -425,21 +457,12 @@ public class Brain : MonoBehaviour {
 			NodeInfo temp = start.GetComponent("NodeInfo") as NodeInfo;
 			GameObject tN = start;
 
-		
 				start = temp.last;
-				//temp = tN.GetComponent("NodeData") as NodeData;
-				//temp.last = null;
-
 
 			if (start == null) running = false;
 		}
 		
 		path.Reverse ();
-		string p = "";
-		for (int i=0; i<path.Count; i++) {
-			p += (GameObject)path[i] + " ";		
-		}
-		print (p);
 		Cleanup ();
 		pathing = true;
 

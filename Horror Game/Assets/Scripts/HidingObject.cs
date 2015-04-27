@@ -7,6 +7,7 @@ public class HidingObject : MonoBehaviour {
 	public GameObject node;
 	private GameObject prevSeen;
 
+
 	// Use this for initialization
 	void Start () {
 		node = null;
@@ -17,7 +18,7 @@ public class HidingObject : MonoBehaviour {
 	void Update () {
 	    if(node == null)
 		{
-			Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.36f);
+			Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.2f);
 			node = hit.gameObject;
 		}
 
@@ -40,6 +41,14 @@ public class HidingObject : MonoBehaviour {
 
 	}
 
+
+
+	public void forceOut(GameObject n)
+	{
+		prevSeen.renderer.material.color = Color.white;
+		prevSeen = n;
+		n.renderer.material.color = Color.clear;
+	}
 
 
 
