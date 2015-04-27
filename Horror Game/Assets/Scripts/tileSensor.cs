@@ -16,7 +16,7 @@ public class tileSensor : MonoBehaviour {
 		{
 			PlayerControl p = hit.gameObject.GetComponent("PlayerControl") as PlayerControl;
 			RuntimeAnimatorController con = (RuntimeAnimatorController)Resources.Load ("Demon", typeof(RuntimeAnimatorController));
-			p.transformation(con);
+			p.transformation(con, gameObject);
 
 			stats pStats = hit.gameObject.GetComponent("stats") as stats;
 			pStats.health += 100;

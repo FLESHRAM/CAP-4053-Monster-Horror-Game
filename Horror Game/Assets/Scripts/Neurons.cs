@@ -278,8 +278,9 @@ public class Neurons : MonoBehaviour {
 						if(n.Count == 0) { Wandering=false; Idle=true; }
 						else if (n.Count > 0)
 						{
+							int randIndex = Random.Range (0, n.Count-1);
 							brain.interruptPath();
-							brain.seek (brain.closestNode(), (GameObject)n[Random.Range (0, n.Count)]);
+							brain.seek (brain.closestNode(), (GameObject)n[randIndex]);
 							Wandering=false; Walking=true; wait=10;
 						}
 					}
