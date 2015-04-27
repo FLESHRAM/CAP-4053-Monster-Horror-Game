@@ -226,7 +226,7 @@ public class Brain : MonoBehaviour {
 	{
 		GameObject player = null;
 		Collider2D p = Physics2D.OverlapCircle (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Player"));
-		if(p!=null)
+		if(p!=null && p.gameObject.renderer.material.color!=Color.clear)
 		{
 			bool hit = Physics2D.Linecast(transform.position, p.transform.position, 1 << LayerMask.NameToLayer("Obstacle"));
 			if(hit) print ("Wall was hit");
