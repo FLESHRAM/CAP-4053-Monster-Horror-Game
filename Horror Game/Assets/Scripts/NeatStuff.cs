@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using SharpNeat.Phenomes;
 
 public class NeatStuff : UnitController {
@@ -37,7 +38,6 @@ public class NeatStuff : UnitController {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		int testing_count = 0;
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
 			if(action_completed){
@@ -45,21 +45,25 @@ public class NeatStuff : UnitController {
 				this.SetIntermediateFitness();
 
 				// Read the sensors
-				//box.InputSignalArray = ais.getInput(box.InputSignalArray);
+				box.InputSignalArray = ais.getInput(box.InputSignalArray);
 
 				// Activate the box (evalute the input with the Neural Network)
-				//box.Activate();
+				box.Activate();
 
 				// Evaluate the output and determine the next action
-				// TODO
+				int max_index = 0;							// We need to determine what is the greatest output
+				float max_value = 0;
+				for(int i = 0; i < box.OutputCount; ++i)
+				{
+					if(box.OutputSignalArray[i] > max_value)
+					{
+						// TODO: is this action possible
+						max_index = i;
+						max_value = box.OutputSignalArray[i];
+						Debug.Log (max_index + ", " + max_value);
+					}
+				}
 
-				// Testing
-				if(testing_count == 0 || testing_count == 1 || testing_count == 3)
-					ais.moveBack();
-				if(testing_count == 2)
-					ais.moveRight();
-
-				testing_count++;
 
 			}
 			// If an action hasn't completed, we should just wait
