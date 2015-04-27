@@ -194,6 +194,19 @@ public class Brain : MonoBehaviour {
 
 
 
+	public ArrayList getNodesinSight()
+	{
+		ArrayList n = new ArrayList ();
+		Collider2D[] nodes = Physics2D.OverlapCircleAll (sight.transform.position, sightRadius, 1 << LayerMask.NameToLayer ("Node"));
+
+
+		for(int i=0; i<nodes.Length; i++)
+		{ n.Add (nodes[i].gameObject); }
+		
+		return n;
+	}
+
+
 	public ArrayList getVisibleNodes ()
 	{
 		ArrayList visible = new ArrayList ();

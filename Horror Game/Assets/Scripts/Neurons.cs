@@ -6,6 +6,7 @@ public class Neurons : MonoBehaviour {
 
 	private Brain brain;
 	private NodeAI nAI;
+	private NodeAI_2 nAI_2;
 
 	private bool checkDone = false;
 
@@ -56,6 +57,7 @@ public class Neurons : MonoBehaviour {
 	
 		GameObject nod = GameObject.Find ("Nodes");
 		nAI = nod.GetComponent ("NodeAI") as NodeAI;
+		nAI_2 = nod.GetComponent ("NodeAI_2") as NodeAI_2;
 		brain = gameObject.GetComponent ("Brain") as Brain;
 		hidingObjectMemory = new ArrayList ();
 		occupiedMem = new ArrayList ();
@@ -96,11 +98,13 @@ public class Neurons : MonoBehaviour {
 		else if(memCount==0) occupiedMem.Clear ();
         
 
-
-		if(nAI.nodesDone && brain.IsRunning)
+		if(nAI!=null)
 		{
-			goodOlFashionAI();
+			if(nAI.nodesDone && brain.IsRunning) { goodOlFashionAI(); }
 		}
+
+		else { if(nAI_2.nodesDone && brain.IsRunning) { goodOlFashionAI(); } }
+
 	}
 
 
@@ -270,10 +274,11 @@ public class Neurons : MonoBehaviour {
 					if(chance>20 && chance<56) { Wandering=false; Idle=true; wait=15; }
 					else
 					{
-						ArrayList n = brain.getVisibleNodes();
+						ArrayList n = brain.getNodesinSight();
 						if(n.Count == 0) { Wandering=false; Idle=true; }
 						else if (n.Count > 0)
 						{
+							brain.interruptPath();
 							brain.seek (brain.closestNode(), (GameObject)n[Random.Range (0, n.Count)]);
 							Wandering=false; Walking=true; wait=10;
 						}

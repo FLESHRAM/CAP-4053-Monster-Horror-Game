@@ -249,7 +249,7 @@ public class AISensors : MonoBehaviour {
 		// Action 0: move forward; Action 1: move right; Action 2; move backward; Action 3 move left
 		if(action < 4)
 		{
-			int abs_dir = this.relativeToAbsoluteDirection;	// 'move' functions use absolute directions
+			int abs_dir = this.relativeToAbsoluteDirection(action);	// 'move' functions use absolute directions
 
 			// Can we move North?
 			if(abs_dir == 0)
@@ -315,7 +315,7 @@ public class AISensors : MonoBehaviour {
 		}
 
 		// TODO
-
+		return false;
 	}
 
 	public List<GameObject> getVisibleNodes ()
