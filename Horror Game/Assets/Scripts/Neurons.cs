@@ -29,6 +29,8 @@ public class Neurons : MonoBehaviour {
 	    private bool SuicideOnPlayer;
 
 
+	private bool attacked = false;
+	private GameObject lastAttacked = null;
 	private bool interrupt;   // Signaling that player was spotted
 		
 
@@ -88,7 +90,21 @@ public class Neurons : MonoBehaviour {
 		ArrayList tempBombs = brain.getVisisbleBombs ();
 		visiblePlayer = brain.visiblePlayer ();
 
-		if(visiblePlayer != null) { lastKnownPlayerPos = visiblePlayer.transform.position; interrupt=true; brain.sprint (); }
+		if(visiblePlayer != null) 
+		{ lastKnownPlayerPos = visiblePlayer.transform.position; interrupt=true; brain.sprint (); attacked=false; lastAttacked=null; }
+
+		else 
+		{
+			if(attacked && lastAttacked!=null)
+			{
+				visiblePlayer = lastAttacked;
+				lastKnownPlayerPos = lastAttacked.transform.position;
+				interrupt = true;
+				brain.sprint ();
+				attacked = false;
+				lastAttacked=null;
+			}
+		}
 
 		remember (hidingObjectMemory, tempHiding);
 		remember (bombMemory, tempBombs);
@@ -107,6 +123,12 @@ public class Neurons : MonoBehaviour {
 
 	}
 
+
+	public void seePlayer(GameObject p)
+	{
+		attacked = true;
+		lastAttacked = p;
+	}
 
 
 	// UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3
@@ -470,7 +492,7 @@ public class Neurons : MonoBehaviour {
 				if(Flee && !brain.pathing && !hold)
 				{
 					GameObject furthest = null;
-					ArrayList visible = brain.getVisibleNodes();
+					ArrayList visible = brain.getNodesinSight();
 					
 					for(int i=0; i<visible.Count; i++)
 					{
@@ -483,7 +505,7 @@ public class Neurons : MonoBehaviour {
 						}
 					}
 					
-					if(furthest!=null) { brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
+					if(furthest!=null) {  brain.interruptPath(); brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
 					else { randomCheck(); }
 
 					wait=10;

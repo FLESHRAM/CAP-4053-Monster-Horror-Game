@@ -104,7 +104,7 @@ public class PlayerControl : MonoBehaviour {
 			 blood.transform.rotation = Quaternion.Slerp (blood.transform.rotation, Quaternion.Euler (0, 0, angle), 1f);
 
 			stats tStats = hit.gameObject.GetComponent("stats") as stats;
-			tStats.damage();
+			tStats.damage(gameObject);
 		   }
 	}
 
