@@ -53,11 +53,9 @@ public class create_map : MonoBehaviour {
 	
 	void createMaze()
 	{
-		floor_patterns = new Transform[6] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8};
+		floor_patterns = new Transform[6] {floor_2,floor_3,floor_5,floor_6,floor_7,floor_8};		
 		
-		
-		
-		while(mazeSize < 30)	
+		while(mazeSize < 100)	
 		{
 			mazeSize = 0;
 			maze = new char[ysize, xsize, 2];
@@ -110,6 +108,42 @@ public class create_map : MonoBehaviour {
 		int chance = 2, chanceIncrement = 4;
 		bool added = false;
 		
+				
+		if((y + 1) < ysize)
+			if(maze[y+1, x, 1] != 'v')
+				if(Random.Range(0, chance) == 0)
+				{
+					chance *= chanceIncrement;
+					coordStack.Insert(0, new Coordinate(x, y+1));
+					maze[y+1, x, 1] = 'v';
+					added = true;
+					mazeSize++;
+				}
+				else
+				{
+					maze[y+1, x, 0] = 'w';
+					maze[y+1, x, 1] = 'v';
+					chance /= chanceIncrement;
+				}		
+				
+		if((x + 1) < xsize)
+			if(maze[y, x+1, 1] != 'v')
+				if(Random.Range(0, chance) == 0)
+				{
+					chance *= chanceIncrement;
+					coordStack.Insert(0, new Coordinate(x+1, y));
+					maze[y, x+1, 1] = 'v';
+					added = true;					
+					mazeSize++;
+				}
+				else
+				{
+					maze[y, x+1, 0] = 'w';
+					maze[y, x+1, 1] = 'v';
+					chance /= chanceIncrement;
+					
+				}			
+			
 		if((y - 1) > 0)
 			if(maze[y-1, x, 1] != 'v')
 				if(Random.Range(0, chance) == 0)
@@ -125,45 +159,9 @@ public class create_map : MonoBehaviour {
 					maze[y-1, x, 0] = 'w';
 					maze[y-1, x, 1] = 'v';
 					chance /= chanceIncrement;
-				}
-				
-		if((x + 1) < xsize)
-			if(maze[y, x+1, 1] != 'v')
-				if(Random.Range(0, chance) == 0)
-			{
-				chance *= chanceIncrement;
-				coordStack.Insert(0, new Coordinate(x+1, y));
-				maze[y, x+1, 1] = 'v';
-				added = true;					
-				mazeSize++;
-			}
-			else
-			{
-				maze[y, x+1, 0] = 'w';
-				maze[y, x+1, 1] = 'v';
-				chance /= chanceIncrement;
-				
-			}			
-		
-		if((y + 1) < ysize)
-		   if(maze[y+1, x, 1] != 'v')
-			   if(Random.Range(0, chance) == 0)
-			   {
-					chance *= chanceIncrement;
-					coordStack.Insert(0, new Coordinate(x, y+1));
-					maze[y+1, x, 1] = 'v';
-					added = true;
-					mazeSize++;
-				}
-				else
-				{
-					maze[y+1, x, 0] = 'w';
-					maze[y+1, x, 1] = 'v';
-					chance /= chanceIncrement;
 				}				
-					
 		
-		if((x -1) > 0)
+		if((x - 1) > 0)
 			if(maze[y, x-1, 1] != 'v')
 				if(Random.Range(0, chance) == 0)
 				{
@@ -178,9 +176,7 @@ public class create_map : MonoBehaviour {
 					maze[y, x-1, 0] = 'w';
 					maze[y, x-1, 1] = 'v';
 					chance /= chanceIncrement;
-					
 				}
-				
 		
 		fillInMaze(coordStack);
 	}
