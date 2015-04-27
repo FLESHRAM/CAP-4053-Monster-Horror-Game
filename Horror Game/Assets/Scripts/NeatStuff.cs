@@ -14,7 +14,17 @@ public class NeatStuff : UnitController {
 	 * 		out[1]: move right
 	 * 		out[2]: move down
 	 * 		out[3]: move left
+	 * out[4]: sprint
+	 * out[5]: hide
+	 * out[6]: pick-up bomb
+	 * out[7]: place bomb / fiddle		* fiddles with bomb trying to arm it, might fail, see **
+	 * out[8]: fiddle score				** for use with 'place bomb / fiddle'; bomb detonates for fiddle < .5
+	 * out[9]: sacrifice				*** blows up bomb
 	 * 
+	 * * Possible:
+	 * 		trip other victim?
+	 * 		rest (recharging sprint)?
+	 * 		comfort other victim?
 	 */
 
 	// Stuff for NEAT
