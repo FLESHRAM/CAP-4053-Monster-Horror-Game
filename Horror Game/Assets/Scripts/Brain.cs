@@ -38,6 +38,7 @@ public class Brain : MonoBehaviour {
 	private float walkingSpeed = 1f;
 	private float runningSpeed = 2.5f;
 	public int sprintCount = 0;
+	public int hope = 10;			// Doesn't seem to help, or maybe... (ranges from 0 to 100)
 
 	Animator anim;
 
