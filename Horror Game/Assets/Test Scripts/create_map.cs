@@ -13,10 +13,11 @@ public class create_map : MonoBehaviour {
 	public Transform floor_3;
 	public Transform floor_2;
 	public Transform floor_1;
-
+	
 	public Transform small_vertical_wall;
 	public Transform wall_vertical;
 	public Transform wall_horizontal;
+	public Transform mazeWall;
 
 	public Transform top_left_corner;
 	public Transform top_right_corner;
@@ -24,6 +25,7 @@ public class create_map : MonoBehaviour {
 	public Transform bottom_left_corner;
 
 	private Transform[] floor_patterns;
+	private Transform[] wall_patterns;
 
 	private int wallResources = 2000;
 	private float leftBound = -16;
@@ -85,7 +87,7 @@ public class create_map : MonoBehaviour {
 					Instantiate (floor_patterns [Random.Range (0, 6)], new Vector3 (x, y, 1.0f), Quaternion.identity);
 				else
 				//else if(maze[i,j,0] == 'w') //Leaves black spaces where no walls or floors are
-					Instantiate (wall_vertical, new Vector3 (x, y, 0.0f), Quaternion.identity);
+					Instantiate (mazeWall, new Vector3 (x, y, 0.0f), Quaternion.identity);
 			}
 		}
 				
