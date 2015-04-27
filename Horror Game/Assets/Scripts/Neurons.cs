@@ -134,7 +134,7 @@ public class Neurons : MonoBehaviour {
 	// UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3
 	private void check(int dir)
 	{
-		print ("Check called");
+		//print ("Check called");
 		GameObject n = brain.closestNode ();
 		NodeInfo nI;
 		if(n!=null)
@@ -266,7 +266,7 @@ public class Neurons : MonoBehaviour {
 								GameObject close1 = brain.closestNode();
 								GameObject close2 = func.closestNode();
 
-								print ("Bomb Path from "+close1+" to "+close2);
+								//print ("Bomb Path from "+close1+" to "+close2);
 
 								brain.interruptPath();
 								brain.seek (close1, close2);

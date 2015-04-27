@@ -97,7 +97,7 @@ public class NodeAI_2 : MonoBehaviour {
 		float yBound = sPos.y;
 		GameObject last = start;
 		GameObject temp = null;
-		print (-1 * xBound);
+		//print (-1 * xBound);
 		
 		
 		
