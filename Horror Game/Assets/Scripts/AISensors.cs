@@ -304,8 +304,8 @@ public class AISensors : MonoBehaviour {
 				return false;
 		}
 
-		// Action 7: Pick up Bomb
-		else if (action == 6)
+		// Action 8: Pick up Bomb
+		else if (action == 7)
 		{
 			// Do we see any bombs?
 			if(brain.getVisisbleBombs().Count > 0)

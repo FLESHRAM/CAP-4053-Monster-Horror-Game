@@ -16,10 +16,11 @@ public class NeatStuff : UnitController {
 	 * 		out[3]: move left
 	 * out[4]: sprint
 	 * out[5]: hide
-	 * out[6]: pick-up bomb
-	 * out[7]: place bomb / fiddle		* fiddles with bomb trying to arm it, might fail, see **
-	 * out[8]: fiddle score				** for use with 'place bomb / fiddle'; bomb detonates for fiddle < .5
-	 * out[9]: sacrifice				*** blows up bomb
+	 * out[6]: hiding selection
+	 * out[7]: pick-up bomb
+	 * out[8]: place bomb / fiddle		* fiddles with bomb trying to arm it, might fail, see **
+	 * out[9]: fiddle score				** for use with 'place bomb / fiddle'; bomb detonates for fiddle < .5
+	 * out[10]: sacrifice				*** blows up bomb
 	 * 
 	 * * Possible:
 	 * 		trip other victim?
@@ -38,16 +39,15 @@ public class NeatStuff : UnitController {
 
 	// Stuff for controlling the victims
 	AISensors ais;								// This will control the brain
-
-	private int testing_count;
-
+	Brain brain;
 
 	// Use this for initialization
 	void Start () {
+		ais = this.GetComponent<AISensors> ();
+		brain = this.GetComponent<Brain> ();
 		action_completed = true;				// There is no previous action, so just start this at true
 		top_impossible_actions = 0;
 		fitness = 0;
-		testing_count = 0;
 	}
 	
 	// Update is called once per frame
@@ -70,7 +70,6 @@ public class NeatStuff : UnitController {
 				int max_possible_index = 0;					// If the max_index isn't a possible action...
 				double max_value = 0;
 				double max_possible_value = 0;
-
 				for(int i = 0; i < box.OutputCount; ++i)
 				{
 					if(box.OutputSignalArray[i] > max_value)
@@ -89,6 +88,25 @@ public class NeatStuff : UnitController {
 						}
 					}
 				}
+				if(max_index != max_possible_index)
+					this.top_impossible_actions = 1;			// Fitness is reduced if the top action is not possible
+				else
+					this.top_impossible_actions = 0;
+
+				// Dispatch the next action
+				if(max_possible_index == 0)
+					ais.moveForward();
+				else if(max_possible_index == 1)
+					ais.moveRight();
+				else if(max_possible_index == 2)
+					ais.moveBack();
+				else if(max_possible_index == 3)
+					ais.moveLeft();
+				else if(max_possible_index == 4)
+					brain.sprint();
+				else if(max_possible_index == 5)
+
+
 			}
 			// If an action hasn't completed, we should just wait
 		}
@@ -165,8 +183,8 @@ public class NeatStuff : UnitController {
 		// Subtract the number of consecutive turns from the fitness
 		fitness -= ais.turn_count;
 
-		// For each top scoring output that is not possible, reduce the fitness by 1
-		fitness -= (top_impossible_actions * -1);
+		// If the top action is impossible, reduce fitness
+		fitness += (top_impossible_actions * -1);
 
 		// Set this.fitness
 		this.fitness = fitness;
