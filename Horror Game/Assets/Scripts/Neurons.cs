@@ -247,7 +247,7 @@ public class Neurons : MonoBehaviour {
 							else
 							{
 								
-								if(Vector2.Distance (transform.position, t.transform.position) < Vector2.Distance(transform.position, closestBomb.transform.position))
+								if(t!=null && Vector2.Distance (transform.position, t.transform.position) < Vector2.Distance(transform.position, closestBomb.transform.position))
 									closestBomb = t;
 							}
 						}
@@ -318,6 +318,9 @@ public class Neurons : MonoBehaviour {
 			 // Moving to a location
 			if(Walking)
 			{
+				Collider2D bomb = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Bomb"));
+				if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
 				if (!brain.pathing) 
 				{ 
 					Walking=false;
@@ -364,6 +367,10 @@ public class Neurons : MonoBehaviour {
 			if(runningAway)
 			{
 				brain.sprint();
+				int chanceToForget = Random.Range (1, 101);
+				if(chanceToForget<51) hidingObjectMemory.Clear();
+
+
 				if(hidingObjectMemory.Count>0)
 				{
 					GameObject furthest = null;
@@ -388,8 +395,11 @@ public class Neurons : MonoBehaviour {
 					runningAway=false; Hiding=true; wait=10;
 				}
 
+
 				else
 				{
+					int bravery = Random.Range(1, 101);
+
 					runningAway = false;
 					Panic=true;
 						Flee=true;
@@ -400,13 +410,19 @@ public class Neurons : MonoBehaviour {
 						SuicideOnPlayer=false;
 
 					randomCheck();	
-					count=50;  // frames to panic in
+					count=300;  // frames to panic in
+					if(brain.hasBomb() && bravery>50) { Flee=false; DesperateWithBomb=true; }
 				}
-			}
 
-			  // Hiding in a place
+
+			}
+			
+			// Hiding in a place
 			if(Hiding)
 			{
+				Collider2D bomb = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Bomb"));
+				if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
 				if(!brain.pathing)
 				{
 					HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
@@ -485,7 +501,7 @@ public class Neurons : MonoBehaviour {
 				if(count%2 == 0) brain.sprint ();
 				if(count>0) count--;
 
-				if(visiblePlayer!=null) count=50; // Keep freaking out
+				if(visiblePlayer!=null) count=1000; // Keep freaking out
 
 
 
@@ -514,11 +530,15 @@ public class Neurons : MonoBehaviour {
 
 				if(Fleeing)
 				{
+					Collider2D bomb = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Bomb"));
+					if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
                     if(!brain.pathing)
 					{
-						if(visiblePlayer == null && hidingObjectMemory.Count>0 && targetHiding==null && Vector2.Distance (transform.position, lastKnownPlayerPos) > 3f)
+						int chance = Random.Range(1, 101);
+						if(chance<45 && visiblePlayer == null && hidingObjectMemory.Count>0 && targetHiding==null && Vector2.Distance (transform.position, lastKnownPlayerPos) > 3f)
 						{
-							int chance = Random.Range(1, 101);
+							chance = Random.Range(1, 101);
 							if(chance>5 && chance<45) { Fleeing=false; PanicHide=true; }
 							else { randomCheck(); Fleeing=false; Flee=true; }
 						}
@@ -527,8 +547,8 @@ public class Neurons : MonoBehaviour {
 						{
 							if(brain.hasBomb()) 
 							{
-								int chance = Random.Range(1, 101);
-								if(chance>60 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
+								chance = Random.Range(1, 101);
+								if(chance>10 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
 								else { randomCheck(); Fleeing=false; Flee=true; }
 							}
 						}
@@ -550,6 +570,10 @@ public class Neurons : MonoBehaviour {
 
 				if(PanicHiding)
 				{
+
+					Collider2D bomb = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Bomb"));
+					if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
 
 					if(!brain.pathing)
 					{
@@ -595,12 +619,13 @@ public class Neurons : MonoBehaviour {
 				if(DesperateWithBomb)
 				{
 					int chance = Random.Range(1, 101);
-					if( (chance>15 && chance<18) || (chance>70 && chance<74)) { brain.fiddle (); }
-					else if(chance>45 && chance<65 && visiblePlayer!=null) 
+					if( (chance>15 && chance<40) || (chance>70 && chance<74)) { brain.fiddle (); }
+					else if(chance<70) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)
 						{
+							brain.interruptPath();
 							brain.seek(brain.closestNode(), n.gameObject);
 							DesperateWithBomb=false; SuicideOnPlayer=true;
 						}

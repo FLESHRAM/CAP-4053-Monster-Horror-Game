@@ -76,6 +76,9 @@ public class ObjectSpawner : MonoBehaviour {
 		{
 			GameObject v = (GameObject)Instantiate(victim);
 			v.transform.position = new Vector2(node.transform.position.x, node.transform.position.y);
+			stats temp = v.GetComponent("stats") as stats;
+			int chance = Random.Range (1, 101);
+			if(chance>50) temp.hasBomb=true;
 			if(Victims != null) v.transform.parent = Victims.transform;
 		}
 	}

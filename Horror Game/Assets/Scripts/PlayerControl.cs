@@ -34,6 +34,7 @@ public class PlayerControl : MonoBehaviour {
 		void FixedUpdate() 
 	{        
 
+		if(Input.GetKey (KeyCode.Escape)) { Application.LoadLevel (0); }
 
 		if(Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
 		{
