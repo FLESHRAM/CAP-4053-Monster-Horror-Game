@@ -247,7 +247,7 @@ public class Neurons : MonoBehaviour {
 							else
 							{
 								
-								if(Vector2.Distance (transform.position, t.transform.position) < Vector2.Distance(transform.position, closestBomb.transform.position))
+								if(t!=null && Vector2.Distance (transform.position, t.transform.position) < Vector2.Distance(transform.position, closestBomb.transform.position))
 									closestBomb = t;
 							}
 						}
@@ -318,6 +318,9 @@ public class Neurons : MonoBehaviour {
 			 // Moving to a location
 			if(Walking)
 			{
+				Collider2D bomb = Physics2D.OverlapCircle(transform.position, 0.5f, 1 << LayerMask.NameToLayer("Bomb"));
+				if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
 				if (!brain.pathing) 
 				{ 
 					Walking=false;
@@ -400,7 +403,7 @@ public class Neurons : MonoBehaviour {
 						SuicideOnPlayer=false;
 
 					randomCheck();	
-					count=50;  // frames to panic in
+					count=300;  // frames to panic in
 				}
 			}
 
@@ -485,7 +488,7 @@ public class Neurons : MonoBehaviour {
 				if(count%2 == 0) brain.sprint ();
 				if(count>0) count--;
 
-				if(visiblePlayer!=null) count=50; // Keep freaking out
+				if(visiblePlayer!=null) count=300; // Keep freaking out
 
 
 
