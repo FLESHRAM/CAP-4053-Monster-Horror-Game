@@ -56,7 +56,7 @@ public class MapMaker2 : MonoBehaviour {
 		
 		
 		
-		while(mazeSize < 30)	
+		while(mazeSize < 100)	
 		{
 			mazeSize = 0;
 			maze = new char[ysize, xsize, 2];
@@ -111,22 +111,7 @@ public class MapMaker2 : MonoBehaviour {
 		int chance = 2, chanceIncrement = 4;
 		bool added = false;
 		
-		if((y - 1) > 0)
-			if(maze[y-1, x, 1] != 'v')
-				if(Random.Range(0, chance) == 0)
-			{
-				chance *= chanceIncrement;
-				coordStack.Insert(0, new Coordinate(x, y-1));
-				maze[y-1, x, 1] = 'v';
-				added = true;
-				mazeSize++;
-			}
-		else
-		{
-			maze[y-1, x, 0] = 'w';
-			maze[y-1, x, 1] = 'v';
-			chance /= chanceIncrement;
-		}
+		
 		
 		if((x + 1) < xsize)
 			if(maze[y, x+1, 1] != 'v')
@@ -163,6 +148,22 @@ public class MapMaker2 : MonoBehaviour {
 			chance /= chanceIncrement;
 		}				
 		
+		if((y - 1) > 0)
+			if(maze[y-1, x, 1] != 'v')
+				if(Random.Range(0, chance) == 0)
+			{
+				chance *= chanceIncrement;
+				coordStack.Insert(0, new Coordinate(x, y-1));
+				maze[y-1, x, 1] = 'v';
+				added = true;
+				mazeSize++;
+			}
+		else
+		{
+			maze[y-1, x, 0] = 'w';
+			maze[y-1, x, 1] = 'v';
+			chance /= chanceIncrement;
+		}
 		
 		if((x -1) > 0)
 			if(maze[y, x-1, 1] != 'v')
