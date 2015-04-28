@@ -367,6 +367,10 @@ public class Neurons : MonoBehaviour {
 			if(runningAway)
 			{
 				brain.sprint();
+				int chanceToForget = Random.Range (1, 101);
+				if(chanceToForget<51) hidingObjectMemory.Clear();
+
+
 				if(hidingObjectMemory.Count>0)
 				{
 					GameObject furthest = null;
