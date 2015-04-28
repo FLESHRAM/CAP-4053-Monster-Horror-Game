@@ -414,6 +414,9 @@ public class Neurons : MonoBehaviour {
 			  // Hiding in a place
 			if(Hiding)
 			{
+				Collider2D bomb = Physics2D.OverlapCircle(transform.position, 0.5f, 1 << LayerMask.NameToLayer("Bomb"));
+				if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
 				if(!brain.pathing)
 				{
 					HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
@@ -521,6 +524,9 @@ public class Neurons : MonoBehaviour {
 
 				if(Fleeing)
 				{
+					Collider2D bomb = Physics2D.OverlapCircle(transform.position, 0.5f, 1 << LayerMask.NameToLayer("Bomb"));
+					if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
                     if(!brain.pathing)
 					{
 						if(visiblePlayer == null && hidingObjectMemory.Count>0 && targetHiding==null && Vector2.Distance (transform.position, lastKnownPlayerPos) > 3f)
@@ -535,7 +541,7 @@ public class Neurons : MonoBehaviour {
 							if(brain.hasBomb()) 
 							{
 								int chance = Random.Range(1, 101);
-								if(chance>60 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
+								if(chance>20 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
 								else { randomCheck(); Fleeing=false; Flee=true; }
 							}
 						}
@@ -557,6 +563,10 @@ public class Neurons : MonoBehaviour {
 
 				if(PanicHiding)
 				{
+
+					Collider2D bomb = Physics2D.OverlapCircle(transform.position, 0.5f, 1 << LayerMask.NameToLayer("Bomb"));
+					if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
+
 
 					if(!brain.pathing)
 					{
@@ -602,8 +612,8 @@ public class Neurons : MonoBehaviour {
 				if(DesperateWithBomb)
 				{
 					int chance = Random.Range(1, 101);
-					if( (chance>15 && chance<18) || (chance>70 && chance<74)) { brain.fiddle (); }
-					else if(chance>45 && chance<65 && visiblePlayer!=null) 
+					if( (chance>15 && chance<40) || (chance>70 && chance<74)) { brain.fiddle (); }
+					else if(chance>45 && chance<80 && visiblePlayer!=null) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)
