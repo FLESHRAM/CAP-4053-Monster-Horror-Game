@@ -161,10 +161,10 @@ public class AISensors : MonoBehaviour {
 		this.seekAbsoluteDirection (new_dir);
 	}
 
-	public void goHide(float selection){
+	public void goHide(double selection){
 		// Get a list of all hiding objects
 		ArrayList cabs = brain.hidingObjects ();
-		int s_index = Math.Floor(cabs.Count * selection);
+		int s_index = (int)Math.Floor(cabs.Count * selection);
 		if (s_index == cabs.Count) {
 			s_index = cabs.Count-1;							// We have to have an index within the array		
 		}
@@ -177,7 +177,7 @@ public class AISensors : MonoBehaviour {
 		// TODO
 	}
 
-	public void placeBomb(float fiddle){
+	public void placeBomb(double fiddle){
 		// TODO
 	}
 
