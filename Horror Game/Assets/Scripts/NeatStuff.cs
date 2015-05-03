@@ -34,7 +34,6 @@ public class NeatStuff : UnitController {
 	float fitness;
 
 	// For Fitness
-	bool action_completed;						// Indicates if the last dispatched action is finished
 	int top_impossible_actions;
 
 	// Stuff for controlling the victims
@@ -45,7 +44,7 @@ public class NeatStuff : UnitController {
 	void Start () {
 		ais = this.GetComponent<AISensors> ();
 		brain = this.GetComponent<Brain> ();
-		action_completed = true;				// There is no previous action, so just start this at true
+		brain.action_completed = true;				// There is no previous action, so just start this at true
 		top_impossible_actions = 0;
 		fitness = 0;
 	}
@@ -55,7 +54,7 @@ public class NeatStuff : UnitController {
 		IsRunning = false;		// So that this doesn't interfer with other stuff
 		if (IsRunning) {
 			// Check if their is an action dispatched and dispatch a new one if there isn't
-			if(action_completed){
+			if(brain.action_completed){
 				// Update the fitness score
 				this.SetIntermediateFitness();
 
@@ -72,6 +71,8 @@ public class NeatStuff : UnitController {
 				double max_possible_value = 0;
 				for(int i = 0; i < box.OutputCount; ++i)
 				{
+					if(i == 6 || i == 9)
+						continue;							// These outputs don't represent actions
 					if(box.OutputSignalArray[i] > max_value)
 					{
 						max_index = i;
@@ -105,6 +106,15 @@ public class NeatStuff : UnitController {
 				else if(max_possible_index == 4)
 					brain.sprint();
 				else if(max_possible_index == 5)
+					ais.goHide(box.OutputSignalArray[6]);
+				else if(max_possible_index == 7)
+					ais.grabBomb();
+				else if(max_possible_index == 8)
+					ais.placeBomb(box.OutputSignalArray[9]);
+				else if(max_possible_index == 10)
+					brain.fiddle();							// Not to be confused with my meaning for 'fiddle'
+
+				brain.action_completed = false;				// We could have timing issues...
 
 
 			}

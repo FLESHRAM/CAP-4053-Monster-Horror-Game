@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SharpNeat.Phenomes;							// For the IBlackBox.InputSignalArray
@@ -160,7 +161,25 @@ public class AISensors : MonoBehaviour {
 		this.seekAbsoluteDirection (new_dir);
 	}
 
+	public void goHide(float selection){
+		// Get a list of all hiding objects
+		ArrayList cabs = brain.hidingObjects ();
+		int s_index = Math.Floor(cabs.Count * selection);
+		if (s_index == cabs.Count) {
+			s_index = cabs.Count-1;							// We have to have an index within the array		
+		}
 
+		// Go hide at s_index
+		brain.seek (brain.closestNode (), (GameObject)cabs [s_index]);
+	}
+
+	public void grabBomb(){
+		// TODO
+	}
+
+	public void placeBomb(float fiddle){
+		// TODO
+	}
 
 	/* Sensor Functions */
 
