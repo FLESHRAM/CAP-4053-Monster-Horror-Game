@@ -700,7 +700,7 @@ public class Neurons : MonoBehaviour {
 				{
 					int chance = Random.Range(1, 101);
 					if( (chance>10 && chance<15) || (chance>70 && chance<75)) { brain.fiddle (); }
-					else if(chance<70 || chance>20) 
+					else if(chance<75 && chance>15) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)
