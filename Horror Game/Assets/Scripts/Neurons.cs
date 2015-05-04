@@ -248,7 +248,7 @@ public class Neurons : MonoBehaviour {
 	public void setBravery(int brav) 
 	{ 
 		bravery = brav;
-		if(bravery > 80) bravery = 80;
+		if(bravery > 90) bravery = 90;
 	}
 
 
