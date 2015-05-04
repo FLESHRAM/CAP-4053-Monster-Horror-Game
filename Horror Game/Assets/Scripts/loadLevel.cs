@@ -6,6 +6,8 @@ public class loadLevel : MonoBehaviour {
 
 	public GameObject loadingImage;
 	private GameObject director;
+	public GameObject dead;
+	public GameObject win;
 
 
 

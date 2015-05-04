@@ -18,7 +18,18 @@ public class ObjectSpawner : MonoBehaviour {
 		GameObject Bomb = (GameObject)Resources.Load ("bomb", typeof(GameObject));
 		GameObject Tile = (GameObject)Resources.Load ("Demon Tile", typeof(GameObject));
 
-		int victims = victimsSpawn;
+
+		int victims;
+		victims = victimsSpawn;
+		GameObject d = GameObject.Find("AI Director");
+		if(d!=null)
+		{
+			Director dir = d.GetComponent("Director") as Director;
+			victims = dir.victimsToSpawn();
+			demonTileSpawn = dir.demonTiles();
+		}
+
+			
 		int player = 1;
 
 

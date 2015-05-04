@@ -4,7 +4,7 @@ using System.Collections;
 public class tileSensor : MonoBehaviour {
 
 
-	private int chanceOfVictim = 20;
+	private int chanceOfVictim = 10;
 
 	// Use this for initialization
 	void Start () {
@@ -13,7 +13,7 @@ public class tileSensor : MonoBehaviour {
 		if(d!=null)
 		{
 			Director dir = d.GetComponent("Director") as Director;
-
+			dir.setTransformRate(this);
 		}
 	   
 	}
@@ -60,4 +60,15 @@ public class tileSensor : MonoBehaviour {
 			}
 		}
 	}
+
+
+
+	public void victimChance(int num)
+	{
+		chanceOfVictim = num;
+		if(chanceOfVictim >= 100) chanceOfVictim = 100;
+	}
+
+
+
 }

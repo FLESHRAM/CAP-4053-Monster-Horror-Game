@@ -5,7 +5,12 @@ public class Director : MonoBehaviour {
 
 
 	private ArrayList Victims;
+	private GameObject Player;
 	private int level=1;
+	private bool gameRunning=false;
+
+	private GameObject dead;
+	private GameObject win;
 
 
 	// Use this for initialization
@@ -16,6 +21,29 @@ public class Director : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+
+		if(gameRunning && Victims.Count==0)
+		{
+			if(win!=null)
+			{
+				win.SetActive(true);
+				gameRunning = false;
+				level++;
+			}
+		}
+
+
+		if(gameRunning && Player==null)
+		{
+			if(dead != null)
+			{
+				print ("Player is dead");
+				dead.SetActive(true);
+				gameRunning = false;
+			}
+
+			else print ("Dead Screen Not Found");
+		}
 	} 
 
 
@@ -32,9 +60,60 @@ public class Director : MonoBehaviour {
 			Neurons[] Vics = V.GetComponentsInChildren<Neurons>();
 			print ("Found "+Vics.Length+" victims.");
 
-
+			for(int i=0; i<Vics.Length; i++)
+			{
+				Victims.Add(Vics[i].gameObject);
+			}
 		}
 
 
+		Player = GameObject.FindGameObjectWithTag("Player");
+
+		GameObject canvas = GameObject.Find ("Canvas");
+		loadLevel lev = canvas.GetComponent ("loadLevel") as loadLevel;
+		dead = lev.dead;
+		win = lev.win;
+
+
+
+		gameRunning = true;
+
+		print ("Finished setting up the game");
 	}
+
+
+
+
+	private void setBravery (GameObject victim)
+	{
+		Neurons n = victim.GetComponent ("Neurons") as Neurons;
+		int bravery = (level * 10);
+		n.setBravery (bravery);
+	}
+
+
+	public void setTransformRate(tileSensor sensor)
+	{
+		int chance = (level * 10);
+		sensor.victimChance (chance);
+	}
+
+
+
+	public int victimsToSpawn()
+	{
+		int num = (level * 5);
+		if(num > 40) num = 40;
+
+		return num;
+	}
+
+
+	public int demonTiles()
+	{
+		if(level < 3) return 7;
+		else if(level>=3 && level<=5) return 10;
+		else return 15;
+	}
+
 }

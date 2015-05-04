@@ -29,10 +29,20 @@ public class stats : MonoBehaviour {
 	{
 		health -= 50;
 
-		if (isMonster && health==100) loseForm(); 
+		if (isMonster && health<=100) loseForm(); 
+
+
+		Neurons n = gameObject.GetComponent ("Neurons") as Neurons;
+
+		if(!isPlayer)
+		{
+			Brain b = gameObject.GetComponent("Brain") as Brain;
+			Neurons neuron = gameObject.GetComponent("Neurons") as Neurons;
+			GameObject canSee = b.visiblePlayer();
+			if(canSee==null && neuron.canBeStealthKilled()) health -= 50;
+		}
 
 		checkLife ();
-		Neurons n = gameObject.GetComponent ("Neurons") as Neurons;
 
 		if(n!=null) { n.seePlayer(Player); }
 	}

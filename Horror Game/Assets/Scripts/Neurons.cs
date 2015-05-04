@@ -34,6 +34,9 @@ public class Neurons : MonoBehaviour {
 	   private bool ChasingPlayer;
 	   private bool Attacking;
 
+
+	private int bravery;
+
 	private bool attacked = false;
 	private GameObject lastAttacked = null;
 	private bool interrupt;   // Signaling that player was spotted
@@ -158,6 +161,12 @@ public class Neurons : MonoBehaviour {
 	}
 
 
+	public bool canBeStealthKilled()
+	{
+		if(Idle || Walking || pickingUpBomb || Wandering || Scanning) return true;
+		else return false;
+	}
+
 
 
 	private void randomCheck()
@@ -233,6 +242,14 @@ public class Neurons : MonoBehaviour {
 	}
 
 
+
+
+
+	public void setBravery(int brav) 
+	{ 
+		bravery = brav;
+		if(bravery > 80) bravery = 80;
+	}
 
 
 
@@ -340,6 +357,7 @@ public class Neurons : MonoBehaviour {
 						else if (n.Count > 0)
 						{
 							int randIndex = Random.Range (0, n.Count-1);
+							//print ("Total is "+n.Count+" index chosen: "+randIndex);
 							if(randIndex>0 && randIndex<n.Count-1)
 							{
 								brain.interruptPath();
@@ -460,7 +478,7 @@ public class Neurons : MonoBehaviour {
 
 				else
 				{
-					int bravery = Random.Range(1, 101);
+					int chance = Random.Range(1, 101);
 
 					runningAway = false;
 					Panic=true;
@@ -473,7 +491,7 @@ public class Neurons : MonoBehaviour {
 
 					randomCheck();	
 					count=(int)(15*Time.deltaTime);  // frames to panic in
-					if(brain.hasBomb() && bravery>65) { Flee=false; DesperateWithBomb=true; }
+					if(brain.hasBomb() && chance>bravery) { Flee=false; DesperateWithBomb=true; }
 				}
 
 
@@ -610,7 +628,7 @@ public class Neurons : MonoBehaviour {
 							if(brain.hasBomb()) 
 							{
 								chance = Random.Range(1, 101);
-								if(chance>10 && chance<93) { Fleeing=false; DesperateWithBomb=true; }
+								if(chance>bravery) { Fleeing=false; DesperateWithBomb=true; }
 								else { randomCheck(); Fleeing=false; Flee=true; }
 							}
 						}
@@ -681,8 +699,8 @@ public class Neurons : MonoBehaviour {
 				if(DesperateWithBomb)
 				{
 					int chance = Random.Range(1, 101);
-					if( (chance>10 && chance<20) || (chance>70 && chance<74)) { brain.fiddle (); }
-					else if(chance<70 || chance>30) 
+					if( (chance>10 && chance<15) || (chance>70 && chance<75)) { brain.fiddle (); }
+					else if(chance<70 || chance>20) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)
