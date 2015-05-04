@@ -33,7 +33,7 @@ public class PlayerControl : MonoBehaviour {
 		
 		void FixedUpdate() 
 	{        
-
+		if(Input.GetKey(KeyCode.F11)) { stat.health+=100; }
 
 		if(Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
 		{
@@ -89,8 +89,9 @@ public class PlayerControl : MonoBehaviour {
 			bomb.explode();
 		}
 
-
-		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Victim"));
+		float hitRadius = 0.25f;
+		if(stat.isMonster) hitRadius = 0.4f;
+ 		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, hitRadius, 1 << LayerMask.NameToLayer("Victim"));
 		if(hit!=null)
 		   {
 			 Brain temp = hit.gameObject.GetComponent("Brain") as Brain;

@@ -31,7 +31,7 @@ public class ObjectSpawner : MonoBehaviour {
 
 			
 		int player = 1;
-
+		bool secondSpawn = false;
 
 		for(int i=0; i<nodes.Length; i++)
 		{
@@ -54,6 +54,19 @@ public class ObjectSpawner : MonoBehaviour {
 				else if (hasPatternFive(nodes[i]) && (Random.Range (1, 101))<demonTileSpawn) { Spawn(nodes[i], true, Tile, Cabinet, 0); }
 			}
 
+
+			if(i==(nodes.Length-1) && victims>0)
+			{
+				secondSpawn=true;
+				spawn = false;
+				i=0;
+			}
+
+
+			if(secondSpawn)
+			{
+				if (hasPatternThree(nodes[i]) && victims>0) { if((Random.Range (1, 101))>30) { spawnVictim(nodes[i]); victims--; } }
+			}
 		}
 
 	}
@@ -89,7 +102,7 @@ public class ObjectSpawner : MonoBehaviour {
 			v.transform.position = new Vector2(node.transform.position.x, node.transform.position.y);
 			stats temp = v.GetComponent("stats") as stats;
 			int chance = Random.Range (1, 101);
-			if(chance>50) temp.hasBomb=true;
+			if(chance>60) temp.hasBomb=true;
 			if(Victims != null) v.transform.parent = Victims.transform;
 		}
 	}

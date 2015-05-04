@@ -448,7 +448,7 @@ public class Neurons : MonoBehaviour {
 			{
 				brain.sprint();
 				int chanceToForget = Random.Range (1, 101);
-				if(chanceToForget<41) hidingObjectMemory.Clear();
+				if(chanceToForget<31) hidingObjectMemory.Clear();
 
 
 				if(hidingObjectMemory.Count>0)
@@ -472,7 +472,7 @@ public class Neurons : MonoBehaviour {
 					targetHiding = furthest;
 					HidingObject hide = targetHiding.GetComponent("HidingObject") as HidingObject;
 					brain.seek (brain.closestNode(), hide.node);
-					runningAway=false; Hiding=true; wait=(int)(5*Time.deltaTime);
+					runningAway=false; Hiding=true; wait=(int)(10*Time.deltaTime);
 				}
 
 
@@ -512,7 +512,7 @@ public class Neurons : MonoBehaviour {
 					if(gameObject.renderer.material.color==Color.clear)
 					{
 						Hiding = false; Stay = true;
-						wait = (int)(10*Time.deltaTime);
+						wait = (int)(30*Time.deltaTime);
 					}
 
 					else
@@ -567,7 +567,7 @@ public class Neurons : MonoBehaviour {
 
 				}
 
-				else wait=(int)(15*Time.deltaTime);
+				else wait=(int)(30*Time.deltaTime);
 			}
 
 

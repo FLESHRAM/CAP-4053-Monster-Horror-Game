@@ -21,6 +21,7 @@ public class Director : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if(Input.GetKey(KeyCode.F10)) { level++; }
 
 		if(gameRunning && Victims.Count==0)
 		{
@@ -104,7 +105,7 @@ public class Director : MonoBehaviour {
 	public int victimsToSpawn()
 	{
 		int num = (level * 5);
-		if(num > 40) num = 40;
+		if(num > 100) num = 100;
 
 		return num;
 	}
@@ -120,7 +121,8 @@ public class Director : MonoBehaviour {
 	{
 		if(level < 3) return 7;
 		else if(level>=3 && level<=5) return 10;
-		else return 15;
+		else if (level>5 && level<10) return 15;
+		else return 20;
 	}
 
 }

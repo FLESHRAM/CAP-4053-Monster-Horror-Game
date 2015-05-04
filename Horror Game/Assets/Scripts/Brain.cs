@@ -451,7 +451,7 @@ public class Brain : MonoBehaviour {
 	public void attackFinished()
 	{
 		//attackDone = true;
-		Collider2D hitBomb = Physics2D.OverlapCircle (hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Bomb"));
+		Collider2D hitBomb = Physics2D.OverlapCircle (hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Bomb"));
 		if(hitBomb != null)
 		{
 			bombFunctions bomb = hitBomb.gameObject.GetComponent("bombFunctions") as bombFunctions;
@@ -459,7 +459,7 @@ public class Brain : MonoBehaviour {
 		}
 		
 		
-		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Player"));
+		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.40f, 1 << LayerMask.NameToLayer("Player"));
 		if(hit!=null)
 		{
 			if(blood!=null) 
