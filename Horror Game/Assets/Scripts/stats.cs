@@ -70,6 +70,14 @@ public class stats : MonoBehaviour {
 
 			GameObject setGore = (GameObject)Instantiate(gore);
 			setGore.transform.position = new Vector2(transform.position.x, transform.position.y);
+
+			GameObject d = GameObject.Find("AI Director");
+			if(d!=null)
+			{
+				Director dir = d.GetComponent("Director") as Director;
+				dir.killVictim(gameObject);
+			}
+
 			Destroy (gameObject);
 		}
 			

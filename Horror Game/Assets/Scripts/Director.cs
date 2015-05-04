@@ -62,6 +62,7 @@ public class Director : MonoBehaviour {
 
 			for(int i=0; i<Vics.Length; i++)
 			{
+				setBravery(Vics[i]);
 				Victims.Add(Vics[i].gameObject);
 			}
 		}
@@ -84,9 +85,9 @@ public class Director : MonoBehaviour {
 
 
 
-	private void setBravery (GameObject victim)
+	private void setBravery (Neurons n)
 	{
-		Neurons n = victim.GetComponent ("Neurons") as Neurons;
+		//Neurons n = victim.GetComponent ("Neurons") as Neurons;
 		int bravery = (level * 10);
 		n.setBravery (bravery);
 	}
@@ -106,6 +107,12 @@ public class Director : MonoBehaviour {
 		if(num > 40) num = 40;
 
 		return num;
+	}
+
+
+	public void killVictim(GameObject vic)
+	{
+		if (Victims.Contains (vic)) Victims.Remove (vic);
 	}
 
 
