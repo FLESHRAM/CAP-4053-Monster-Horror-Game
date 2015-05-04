@@ -473,7 +473,7 @@ public class Neurons : MonoBehaviour {
 
 					randomCheck();	
 					count=(int)(15*Time.deltaTime);  // frames to panic in
-					if(brain.hasBomb() && bravery>60) { Flee=false; DesperateWithBomb=true; }
+					if(brain.hasBomb() && bravery>65) { Flee=false; DesperateWithBomb=true; }
 				}
 
 
@@ -681,8 +681,8 @@ public class Neurons : MonoBehaviour {
 				if(DesperateWithBomb)
 				{
 					int chance = Random.Range(1, 101);
-					if( (chance>15 && chance<40) || (chance>70 && chance<74)) { brain.fiddle (); }
-					else if(chance<70) 
+					if( (chance>10 && chance<20) || (chance>70 && chance<74)) { brain.fiddle (); }
+					else if(chance<70 || chance>30) 
 					{
 						Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
 						if(n!=null)
