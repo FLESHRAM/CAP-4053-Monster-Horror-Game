@@ -29,6 +29,11 @@ public class Neurons : MonoBehaviour {
 	    private bool SuicideOnPlayer;
 
 
+	private bool Monster;
+		// Monster States
+	   private bool ChasingPlayer;
+	   private bool Attacking;
+
 	private bool attacked = false;
 	private GameObject lastAttacked = null;
 	private bool interrupt;   // Signaling that player was spotted
@@ -74,6 +79,7 @@ public class Neurons : MonoBehaviour {
 		runningAway = false;
 		Hiding = false;
 		Panic = false;
+		Monster = false;
 
 		wait = 0;
 		count = 0;
@@ -167,6 +173,47 @@ public class Neurons : MonoBehaviour {
 
 
 
+	public void setMonsterAI()
+	{
+		brain.interruptPath ();
+		Monster = true;
+		Idle = true;
+		Scanning = false;
+		Wandering = false;
+		pickingUpBomb = false;
+		runningAway = false;
+		Hiding = false;
+		Panic = false;
+
+		wait = 0;
+		count = 0;
+		memCount = 0;
+	}
+
+
+
+	public void ressetAI()
+	{
+		brain.interruptPath ();
+		Idle = true;
+		Scanning = false;
+		Wandering = false;
+		pickingUpBomb = false;
+		runningAway = false;
+		Hiding = false;
+		Panic = false;
+		Monster = false;
+		
+		wait = 0;
+		count = 0;
+		memCount = 0;
+	}
+
+
+
+
+
+
 	private void remember(ArrayList mem, ArrayList input)
 	{
 		if(input.Count > 0)
@@ -187,29 +234,6 @@ public class Neurons : MonoBehaviour {
 
 
 
-	private void interruptAndRun()
-	{
-		if(Idle) Idle=false;
-		if(Scanning) Scanning=false;
-		if(Wandering) Wandering=false;
-		if(Walking) { brain.interruptPath(); Walking=false; }
-		if(pickingUpBomb)
-		{
-			if(targetBomb!=null)
-			{
-				bombFunctions f = targetBomb.GetComponent("bombFunctions") as bombFunctions;
-				f.unMark();
-				bombMemory.Add (targetBomb);
-				targetBomb = null;
-			}
-
-			//brain.interruptPath();
-			pickingUpBomb = false;
-		}
-
-		runningAway = true; 
-		brain.sprint ();
-	}
 
 
 
@@ -221,7 +245,8 @@ public class Neurons : MonoBehaviour {
 			  // Base Idle STATE
 			if (Idle) 
 			{
-				if(interrupt) { Idle=false; runningAway=true; wait=10; }
+				if(interrupt) 
+				{ Idle=false; if(!Monster) runningAway=true; else ChasingPlayer=true;  wait=(int)(3*Time.deltaTime); }
 				else { Scanning = true; Idle = false; count = 0; }
 			}
 
@@ -229,11 +254,17 @@ public class Neurons : MonoBehaviour {
 			 // AI scans the area
 			if(Scanning)
 			{
-			  if(interrupt) { Scanning=false; runningAway=true; wait=10; }
+				if(Monster)
+				{
+					Collider2D p = Physics2D.OverlapCircle(brain.hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Player"));
+					if(p!=null) { brain.attack (); }
+				}
+
+				if(interrupt) { Scanning=false; if(!Monster) runningAway=true; else ChasingPlayer=true; wait=(int)(3*Time.deltaTime); }
               else
 			  {
-					if(count<4) { check(count); wait=20; count++;} 
-					if(count == 4 && (bombMemory.Count==0 || brain.hasBomb())) { wait=10; Scanning=false; Wandering=true;}
+					if(count<4) { check(count); wait=(int)(3*Time.deltaTime); count++;} 
+					if(count == 4 && (bombMemory.Count==0 || brain.hasBomb())) { wait=(int)(5*Time.deltaTime); Scanning=false; Wandering=true;}
 					else if (count == 4 && bombMemory.Count>0 && !brain.hasBomb()) 
 					{ 
 						
@@ -258,7 +289,7 @@ public class Neurons : MonoBehaviour {
 							bombMemory.Remove (closestBomb);
 							
 							bombFunctions func = targetBomb.GetComponent("bombFunctions") as bombFunctions;
-							if(func.isMarked()) { targetBomb = null; wait=10; Scanning=false; Wandering=true; }
+							if(func.isMarked()) { targetBomb = null; wait=(int)(3*Time.deltaTime); Scanning=false; Wandering=true; }
 							else
 							{
 								func.mark();
@@ -271,13 +302,13 @@ public class Neurons : MonoBehaviour {
 								brain.interruptPath();
 								brain.seek (close1, close2);
 								brain.printPath();
-								wait=10; Scanning=false; pickingUpBomb=true;
+								wait=(int)(3*Time.deltaTime); Scanning=false; pickingUpBomb=true;
 							}
 							
 							
 						}
 						
-						else { wait=10; Scanning=false; Wandering=true; }
+						else { wait=(int)(3*Time.deltaTime); Scanning=false; Wandering=true; }
 						
 					} 
 			  }
@@ -289,11 +320,19 @@ public class Neurons : MonoBehaviour {
 			  // AI wanders aimlessly
 			if(Wandering)
 			{
-				if(interrupt) { Wandering=false; runningAway=true; wait=10; }
+
+				if(Monster)
+				{
+					Collider2D p = Physics2D.OverlapCircle(brain.hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Player"));
+					if(p!=null) { brain.attack (); }
+				}
+
+
+				if(interrupt) { Wandering=false; if(!Monster) runningAway=true; else ChasingPlayer=true; wait=(int)(3*Time.deltaTime); }
 				else
 				{
 					int chance = Random.Range(1, 101);
-					if(chance>20 && chance<56) { Wandering=false; Idle=true; wait=15; }
+					if(chance>20 && chance<56) { Wandering=false; Idle=true; wait=(int)(5*Time.deltaTime); }
 					else
 					{
 						ArrayList n = brain.getNodesinSight();
@@ -305,7 +344,7 @@ public class Neurons : MonoBehaviour {
 							{
 								brain.interruptPath();
 								brain.seek (brain.closestNode(), (GameObject)n[randIndex]);
-								Wandering=false; Walking=true; wait=10;
+								Wandering=false; Walking=true; wait=(int)(3*Time.deltaTime);
 							}
 
 						}
@@ -318,6 +357,12 @@ public class Neurons : MonoBehaviour {
 			 // Moving to a location
 			if(Walking)
 			{
+				if(Monster)
+				{
+					Collider2D p = Physics2D.OverlapCircle(brain.hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Player"));
+					if(p!=null) { brain.attack (); }
+				}
+
 				Collider2D bomb = Physics2D.OverlapCircle(transform.position, 1f, 1 << LayerMask.NameToLayer("Bomb"));
 				if(bomb!=null && !brain.hasBomb()) { brain.pickUpBomb(bomb.gameObject); }
 
@@ -325,10 +370,10 @@ public class Neurons : MonoBehaviour {
 				{ 
 					Walking=false;
 
-					if(interrupt) { runningAway=true; }
+					if(interrupt) { if(!Monster) runningAway=true; else ChasingPlayer=true; }
 					else { Wandering=true; }  
 
-					wait=10;
+					wait=(int)(3*Time.deltaTime);
 				}
 
 				else
@@ -336,8 +381,19 @@ public class Neurons : MonoBehaviour {
 					if(interrupt)
 					{
 						brain.interruptPath();
-						Walking=false; runningAway=true;
-						wait=10;
+						Walking=false; 
+						if(!Monster)
+						{
+							runningAway=true;
+							wait=(int)(5*Time.deltaTime);
+						}
+							 
+						else
+						{
+							ChasingPlayer=true;
+							wait=(int)(1*Time.deltaTime);
+						}
+
 					}
 				}
 
@@ -348,16 +404,22 @@ public class Neurons : MonoBehaviour {
 			 // Moving to retrieve a bomb
 			if(pickingUpBomb)
 			{
+				if(Monster)
+				{
+					Collider2D p = Physics2D.OverlapCircle(brain.hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Player"));
+					if(p!=null) { brain.attack (); }
+				}
+
 				if (!brain.pathing) 
 				{
 					if(targetBomb==null) { brain.interruptPath(); }
 					else { brain.pickUpBomb(targetBomb); }
 
 					pickingUpBomb=false;
-					if(interrupt) { runningAway=true; }
+					if(interrupt) { if(!Monster) runningAway=true; else ChasingPlayer=true; }
 					else { Wandering=true; }  
 
-					wait=10;
+					wait=(int)(5*Time.deltaTime);
 				}
 			}
 
@@ -368,7 +430,7 @@ public class Neurons : MonoBehaviour {
 			{
 				brain.sprint();
 				int chanceToForget = Random.Range (1, 101);
-				if(chanceToForget<51) hidingObjectMemory.Clear();
+				if(chanceToForget<41) hidingObjectMemory.Clear();
 
 
 				if(hidingObjectMemory.Count>0)
@@ -392,7 +454,7 @@ public class Neurons : MonoBehaviour {
 					targetHiding = furthest;
 					HidingObject hide = targetHiding.GetComponent("HidingObject") as HidingObject;
 					brain.seek (brain.closestNode(), hide.node);
-					runningAway=false; Hiding=true; wait=10;
+					runningAway=false; Hiding=true; wait=(int)(5*Time.deltaTime);
 				}
 
 
@@ -410,8 +472,8 @@ public class Neurons : MonoBehaviour {
 						SuicideOnPlayer=false;
 
 					randomCheck();	
-					count=300;  // frames to panic in
-					if(brain.hasBomb() && bravery>50) { Flee=false; DesperateWithBomb=true; }
+					count=(int)(15*Time.deltaTime);  // frames to panic in
+					if(brain.hasBomb() && bravery>60) { Flee=false; DesperateWithBomb=true; }
 				}
 
 
@@ -432,7 +494,7 @@ public class Neurons : MonoBehaviour {
 					if(gameObject.renderer.material.color==Color.clear)
 					{
 						Hiding = false; Stay = true;
-						wait = 20;
+						wait = (int)(10*Time.deltaTime);
 					}
 
 					else
@@ -471,7 +533,7 @@ public class Neurons : MonoBehaviour {
 							brain.hideBomb(targetHiding);
 						}
 
-						Stay=false; Wandering=true; wait=5;
+						Stay=false; Wandering=true; wait=(int)(3*Time.deltaTime);
 						targetHiding=null;
 					}
 
@@ -480,14 +542,14 @@ public class Neurons : MonoBehaviour {
 						int chance = Random.Range (1, 101);
 						if(chance>80)
 						{
-							Stay=false; Wandering=true; wait=5;
+							Stay=false; Wandering=true; wait=(int)(3*Time.deltaTime);
 							targetHiding=null;
 						}
 					}
 
 				}
 
-				else wait=50;
+				else wait=(int)(15*Time.deltaTime);
 			}
 
 
@@ -501,7 +563,7 @@ public class Neurons : MonoBehaviour {
 				if(count%2 == 0) brain.sprint ();
 				if(count>0) count--;
 
-				if(visiblePlayer!=null) count=1000; // Keep freaking out
+				if(visiblePlayer!=null) count=(int)(20*Time.deltaTime); // Keep freaking out
 
 
 
@@ -524,7 +586,7 @@ public class Neurons : MonoBehaviour {
 					if(furthest!=null) {  brain.interruptPath(); brain.seek (brain.closestNode(), furthest); Flee=false; Fleeing=true; }
 					else { randomCheck(); }
 
-					wait=10;
+					wait=(int)(3*Time.deltaTime);
 				}
 
 
@@ -553,7 +615,7 @@ public class Neurons : MonoBehaviour {
 							}
 						}
 
-						wait=5;
+						wait=(int)(3*Time.deltaTime);
 					}
 				}
 
@@ -564,7 +626,7 @@ public class Neurons : MonoBehaviour {
 					HidingObject h = targetHiding.GetComponent("HidingObject") as HidingObject;
 					
 					brain.seek (brain.closestNode(), h.node);
-					PanicHide=false; PanicHiding=true; wait=5;
+					PanicHide=false; PanicHiding=true; wait=(int)(3*Time.deltaTime);
 				}
 
 
@@ -609,7 +671,7 @@ public class Neurons : MonoBehaviour {
 
 						else { PanicHiding=false; Flee=true; }
 
-						wait=5;
+						wait=(int)(3*Time.deltaTime);
 
 					}
 
@@ -635,7 +697,7 @@ public class Neurons : MonoBehaviour {
 
 					else { randomCheck(); DesperateWithBomb=false; Flee=true; }
 
-					wait=5;
+					wait=(int)(3*Time.deltaTime);
 				}
 
 
@@ -656,7 +718,7 @@ public class Neurons : MonoBehaviour {
 						}
 
 						else { randomCheck(); SuicideOnPlayer=false; Flee=true; }
-						wait=5;
+						wait=(int)(3*Time.deltaTime);
 					}
 
 				}
@@ -666,9 +728,66 @@ public class Neurons : MonoBehaviour {
 				{
 					brain.interruptPath();
 					Panic=false;
+						Flee=false;
+						Fleeing=false;
+						PanicHide=false;
+						PanicHiding=false;
+						DesperateWithBomb=false;
+						SuicideOnPlayer=false;
 					Idle=true;
 				}
 			}
+
+
+
+			if(ChasingPlayer)
+			{
+				Collider2D p = Physics2D.OverlapCircle(brain.hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Player"));
+				if(p!=null) { brain.attack (); }
+
+				Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
+				if(n!=null)
+				{
+					brain.interruptPath();
+					brain.seek(brain.closestNode(), n.gameObject);
+					ChasingPlayer=false; Attacking=true;
+				}
+				
+				else { randomCheck(); ChasingPlayer=false; Idle=true;}
+
+				wait=(int)(3*Time.deltaTime);
+			}
+
+
+			if(Attacking)
+			{
+				Collider2D p = Physics2D.OverlapCircle(brain.hitSpace.transform.position, 0.3f, 1 << LayerMask.NameToLayer("Player"));
+				if(p!=null) { brain.attack (); }
+
+				if(!brain.pathing)
+				{
+					if(visiblePlayer!=null)
+					{
+
+						if(Vector2.Distance (transform.position, lastKnownPlayerPos) < 0.2f) 
+						{ 
+
+							brain.attack (); Attacking=false; ChasingPlayer=true; 
+						}
+						else
+						{
+							Collider2D n = Physics2D.OverlapCircle(lastKnownPlayerPos, 0.3f, 1 << LayerMask.NameToLayer("Node"));
+							if(n!=null) { brain.seek(brain.closestNode(), n.gameObject); }
+							else { randomCheck(); Attacking=false; Idle=true;}
+						}
+					}
+					
+					else { randomCheck(); Attacking=false; Idle=true; }
+					wait=(int)(3*Time.deltaTime);
+				}
+			}
+
+
 
 		}
 

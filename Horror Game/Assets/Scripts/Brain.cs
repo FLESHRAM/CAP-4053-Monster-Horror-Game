@@ -8,6 +8,10 @@ public class Brain : MonoBehaviour {
 	public GameObject blood;
 	private bool isVictimGirl;
 
+	public GameObject hitSpace;
+	private GameObject tile;
+	private RuntimeAnimatorController transforming;
+
 	/* Neat Stuff */
 	public bool IsRunning;				// Set by NEAT
 	public bool action_completed = true;		// Indicates that the last commanded action is no longer in progress
@@ -45,12 +49,12 @@ public class Brain : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         
+		stat = gameObject.GetComponent ("stats") as stats;
 		anim = gameObject.GetComponent<Animator> ();
 		blood = (GameObject)Resources.Load ("Blood Spill", typeof(GameObject));
 		   int rand = Random.Range (1, 101);
 		   setVictim (rand);
 		saved_cont = anim.runtimeAnimatorController;
-		stat = gameObject.GetComponent ("stats") as stats;
 
 		GameObject close = closestNode ();
 		transform.position = new Vector2 (close.transform.position.x, close.transform.position.y);
@@ -148,6 +152,7 @@ public class Brain : MonoBehaviour {
 		else if (rand > 50)
 		{
 			isVictimGirl = false;
+			stat.setMan();
 			anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load ("Man", typeof(RuntimeAnimatorController));
 			gameObject.name = "Man";
 		}
@@ -178,6 +183,7 @@ public class Brain : MonoBehaviour {
 
 			bombFunctions bF = bomb.GetComponent("bombFunctions") as bombFunctions;
 			bF.explode();
+			stat.bombDamage();
 		}
 	}
 
@@ -388,16 +394,96 @@ public class Brain : MonoBehaviour {
 
 
 
-
-	void advancedSeek(GameObject start, GameObject target)
+	public void transformation(RuntimeAnimatorController Monster, GameObject demonTile)
 	{
-		//bool linked = false;
-		//GameObject temp = target;
-		//while (!linked) 
-		//{
-
-		//}
+		anim.SetBool ("Transform", true);
+		transforming = Monster;
+		tile = demonTile;
 	}
+
+
+
+	public void finishTransform() 
+	{ 
+		Animator a = gameObject.GetComponent<Animator> ();
+		anim.SetBool ("Transform", false);
+		a.runtimeAnimatorController = transforming;
+		AudioSource audio = a.GetComponent<AudioSource> ();
+		audio.clip = (AudioClip)Resources.Load ("Sounds/Monster Bite", typeof(AudioClip));
+
+		gameObject.renderer.material.color = Color.white;
+
+		Neurons n = gameObject.GetComponent ("Neurons") as Neurons;
+		n.setMonsterAI ();
+
+		Destroy (tile);
+	}
+
+
+
+	public void loseForm()
+	{
+		Animator a = gameObject.GetComponent<Animator> ();
+		a.runtimeAnimatorController = saved_cont;
+	
+		stat.isMonster = false;
+		
+		GameObject gore = (GameObject)Resources.Load ("Gore/Monster Gore", typeof(GameObject));
+		GameObject setGore = (GameObject)Instantiate (gore);
+		setGore.transform.position = new Vector2(transform.position.x, transform.position.y);
+
+		Neurons n = gameObject.GetComponent ("Neurons") as Neurons;
+		n.ressetAI();
+		
+		AudioSource audio = gameObject.GetComponent<AudioSource> ();
+		audio.clip = null;
+
+		gameObject.renderer.material.color = Color.white;
+	}
+
+
+
+
+	public void attack()
+	{ anim.SetBool("IsAttacking", true); }
+
+
+	public void attackFinished()
+	{
+		//attackDone = true;
+		Collider2D hitBomb = Physics2D.OverlapCircle (hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Bomb"));
+		if(hitBomb != null)
+		{
+			bombFunctions bomb = hitBomb.gameObject.GetComponent("bombFunctions") as bombFunctions;
+			bomb.explode();
+		}
+		
+		
+		Collider2D hit = Physics2D.OverlapCircle(hitSpace.transform.position, 0.20f, 1 << LayerMask.NameToLayer("Player"));
+		if(hit!=null)
+		{
+			if(blood!=null) 
+			{
+				GameObject b = (GameObject)Instantiate(blood);
+				b.transform.position = new Vector2(hit.gameObject.transform.position.x, hit.gameObject.transform.position.y);
+				
+				
+				Vector3 dir = transform.position - blood.transform.position; 
+				dir.z = 0; dir.Normalize();
+				float angle = Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg;
+				b.transform.rotation = Quaternion.Slerp (blood.transform.rotation, Quaternion.Euler (0, 0, angle), 1f);
+			}
+
+			
+			stats tStats = hit.gameObject.GetComponent("stats") as stats;
+			tStats.damage(gameObject);
+		}
+
+		anim.SetBool("IsAttacking", false);
+	}
+
+
+
 
 
 
@@ -409,6 +495,10 @@ public class Brain : MonoBehaviour {
 		}
 		print (p);
 	}
+
+
+
+
 
 
 
@@ -473,6 +563,8 @@ public class Brain : MonoBehaviour {
 
 
 
+
+
 	private void traverseTo(GameObject node, GameObject curr)
 	{
 		NodeInfo info = node.GetComponent("NodeInfo") as NodeInfo;
@@ -499,6 +591,8 @@ public class Brain : MonoBehaviour {
 	}
 	
 	
+
+
 
 
 	private void Cleanup()

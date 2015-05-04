@@ -34,7 +34,6 @@ public class PlayerControl : MonoBehaviour {
 		void FixedUpdate() 
 	{        
 
-		if(Input.GetKey (KeyCode.Escape)) { Application.LoadLevel (0); }
 
 		if(Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
 		{
@@ -118,6 +117,15 @@ public class PlayerControl : MonoBehaviour {
 
 		SpriteRenderer r = gameObject.GetComponent ("SpriteRenderer") as SpriteRenderer;
 		r.material.color = Color.white;
+		stat.isMonster = false;
+
+		GameObject gore = (GameObject)Resources.Load ("Gore/Monster Gore", typeof(GameObject));
+		GameObject setGore = (GameObject)Instantiate (gore);
+		setGore.transform.position = new Vector2(transform.position.x, transform.position.y);
+
+
+		AudioSource audio = player.GetComponent<AudioSource> ();
+		audio.clip = (AudioClip)Resources.Load ("Sounds/Knife Swing", typeof(AudioClip));
 	}
 
     
@@ -135,6 +143,11 @@ public class PlayerControl : MonoBehaviour {
 		Animator player = gameObject.GetComponent<Animator> ();
 		anim.SetBool ("Transform", false);
 		player.runtimeAnimatorController = transforming;
+		AudioSource audio = player.GetComponent<AudioSource> ();
+		audio.clip = (AudioClip)Resources.Load ("Sounds/Monster Bite", typeof(AudioClip));
+
+		gameObject.renderer.material.color = Color.white;
+
 		Destroy (tile);
 	}
 

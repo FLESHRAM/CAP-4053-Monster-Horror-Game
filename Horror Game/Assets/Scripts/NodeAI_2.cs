@@ -8,6 +8,7 @@ public class NodeAI_2 : MonoBehaviour {
 	private ArrayList currNodes;
 	private float nodeShift = 0.37f;
 	
+
 	public bool nodesDone = false;
 	
 	//private float node_offset;
@@ -38,7 +39,12 @@ public class NodeAI_2 : MonoBehaviour {
 		
 		GameObject Victims = GameObject.Find ("Victims");
 
-
+		GameObject d = GameObject.Find("AI Director");
+		if(d!=null)
+		{
+			Director dir = d.GetComponent("Director") as Director;
+			dir.Refresh();
+		}
 		
 		
 		nodesDone = true;
@@ -49,7 +55,7 @@ public class NodeAI_2 : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+		if(Input.GetKey (KeyCode.Escape)) { Application.LoadLevel (0); }
 	}
 	
 	
