@@ -42,6 +42,8 @@ public class stats : MonoBehaviour {
 			if(canSee==null && neuron.canBeStealthKilled()) health -= 50;
 		}
 
+		if(health<0) health =0;
+
 		checkLife ();
 
 		if(n!=null) { n.seePlayer(Player); }
