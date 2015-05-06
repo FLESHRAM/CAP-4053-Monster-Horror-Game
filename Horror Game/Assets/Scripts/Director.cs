@@ -105,9 +105,17 @@ public class Director : MonoBehaviour {
 	public int victimsToSpawn()
 	{
 		int num = (level * 5);
-		if(num > 100) num = 100;
+		if(num > 40) num = 40;
 
 		return num;
+	}
+
+
+	public int victimChanceOfSpawn()
+	{
+		if(level < 6) return 35;
+		else if (level>5 && level<9) return 20;
+		else return 10;
 	}
 
 

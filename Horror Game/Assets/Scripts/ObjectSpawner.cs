@@ -21,17 +21,18 @@ public class ObjectSpawner : MonoBehaviour {
 
 		int victims;
 		victims = victimsSpawn;
+		int vicSpawnChance = 30;
 		GameObject d = GameObject.Find("AI Director");
 		if(d!=null)
 		{
 			Director dir = d.GetComponent("Director") as Director;
 			victims = dir.victimsToSpawn();
 			demonTileSpawn = dir.demonTiles();
+			vicSpawnChance = dir.victimChanceOfSpawn();
 		}
 
 			
 		int player = 1;
-		bool secondSpawn = false;
 
 		for(int i=0; i<nodes.Length; i++)
 		{
@@ -49,24 +50,11 @@ public class ObjectSpawner : MonoBehaviour {
 			{
 				if(hasPatternOne(nodes[i]) && !bomb) { Spawn(nodes[i], bomb, Bomb, Cabinet, 90); }
 				else if(hasPatternTwo(nodes[i]) && bomb) { Spawn(nodes[i], bomb, Bomb, Cabinet, 0); }
-				else if (hasPatternThree(nodes[i]) && victims>0) { if((Random.Range (1, 101))>30) { spawnVictim(nodes[i]); victims--; } }
+				else if (hasPatternThree(nodes[i]) && victims>0) { if((Random.Range (1, 101))>vicSpawnChance) { spawnVictim(nodes[i]); victims--; } }
 				else if(hasPatternFour(nodes[i]) && player>0) { spawnPlayer(nodes[i]); player--; }
 				else if (hasPatternFive(nodes[i]) && (Random.Range (1, 101))<demonTileSpawn) { Spawn(nodes[i], true, Tile, Cabinet, 0); }
 			}
 
-
-			if(i==(nodes.Length-1) && victims>0)
-			{
-				secondSpawn=true;
-				spawn = false;
-				i=0;
-			}
-
-
-			if(secondSpawn)
-			{
-				if (hasPatternThree(nodes[i]) && victims>0) { if((Random.Range (1, 101))>30) { spawnVictim(nodes[i]); victims--; } }
-			}
 		}
 
 	}
